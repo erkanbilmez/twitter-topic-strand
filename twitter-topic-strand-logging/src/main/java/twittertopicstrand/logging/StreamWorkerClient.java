@@ -31,7 +31,8 @@ public class StreamWorkerClient implements Runnable {
     	String rVal = outputDir + File.separator;
     	
     	DateTime now = new DateTime();
-    	rVal += now.toString("yyyy-MM-dd");
+    	
+    	rVal += now.toString("yyyy-MM-dd-hh");
     	rVal += "-tID" +  String.format("%04d", this.threadID) + ".txt";
     	
     	return rVal;
@@ -54,7 +55,7 @@ public class StreamWorkerClient implements Runnable {
             }
 
             try {
-                Thread.sleep(6 * 1000);
+                Thread.sleep(2 * 1000);
             } catch (InterruptedException e) {
 
         }

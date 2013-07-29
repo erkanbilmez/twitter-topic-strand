@@ -38,7 +38,7 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
     private String mediaURLHttps;
     private String expandedURL;
     private String displayURL;
-    private Map<Integer, MediaEntity.Size> sizes;
+    private Map<Integer, Size> sizes;
     private String type;
 
     MediaEntityJSONImpl(JSONObject json) throws TwitterException {
@@ -55,7 +55,7 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
             this.displayURL = json.getString("display_url");
 
             JSONObject sizes = json.getJSONObject("sizes");
-            this.sizes = new HashMap<Integer, MediaEntity.Size>(4);
+            this.sizes = new HashMap<Integer, Size>(4);
             // thumbworkarounding API side issue
             addMediaEntitySizeIfNotNull(this.sizes, sizes, MediaEntity.Size.LARGE, "large");
             addMediaEntitySizeIfNotNull(this.sizes, sizes, MediaEntity.Size.MEDIUM, "medium");
@@ -69,7 +69,7 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
         }
     }
 
-    private void addMediaEntitySizeIfNotNull(Map<Integer, MediaEntity.Size> sizes, JSONObject sizesJSON, Integer size, String key) throws JSONException {
+    private void addMediaEntitySizeIfNotNull(Map<Integer, Size> sizes, JSONObject sizesJSON, Integer size, String key) throws JSONException {
         if(!sizesJSON.isNull(key)){
             sizes.put(size, new Size(sizesJSON.getJSONObject(key)));
         }
@@ -129,7 +129,7 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
     }
 
     @Override
-    public Map<Integer, MediaEntity.Size> getSizes() {
+    public Map<Integer, Size> getSizes() {
         return sizes;
     }
 
@@ -157,7 +157,7 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
         return super.getEnd();
     }
 
-    static class Size implements MediaEntity.Size {
+    public static class Size implements MediaEntity.Size {
         private static final long serialVersionUID = 8681853416159361581L;
         int width;
         int height;

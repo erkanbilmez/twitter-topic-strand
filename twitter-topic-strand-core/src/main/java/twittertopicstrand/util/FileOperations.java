@@ -54,12 +54,8 @@ public class FileOperations {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         
-        int counter = 0;
-        
         while ((line = br.readLine()) != null) {
             rVal.add(line);
-            
-            counter++;
         }
         br.close();
 

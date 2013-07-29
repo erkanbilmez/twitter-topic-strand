@@ -40,7 +40,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
 public final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable {
     private static final Logger logger = Logger.getLogger(StatusJSONImpl.class);
     private static final long serialVersionUID = 7548618898682727465L;
-
+    
     private Date createdAt;
     private long id;
     private String text;
@@ -51,17 +51,17 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
     private boolean isFavorited;
     private String inReplyToScreenName;
     private GeoLocation geoLocation = null;
-    private Place place = null;
+    private PlaceJSONImpl place = null;
     private long retweetCount;
     private boolean isPossiblySensitive;
 
     private long[] contributorsIDs;
 
-    private Status retweetedStatus;
-    private UserMentionEntity[] userMentionEntities;
-    private URLEntity[] urlEntities;
-    private HashtagEntity[] hashtagEntities;
-    private MediaEntity[] mediaEntities;
+    private StatusJSONImpl retweetedStatus;
+    private UserMentionEntityJSONImpl[] userMentionEntities;
+    private URLEntityJSONImpl[] urlEntities;
+    private HashtagEntityJSONImpl[] hashtagEntities;
+    private MediaEntityJSONImpl[] mediaEntities;
     private long currentUserRetweetId = -1L;
 
     /*package*/StatusJSONImpl(HttpResponse res, Configuration conf) throws TwitterException {
@@ -138,7 +138,7 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
                 if (!entities.isNull("user_mentions")) {
                     JSONArray userMentionsArray = entities.getJSONArray("user_mentions");
                     len = userMentionsArray.length();
-                    userMentionEntities = new UserMentionEntity[len];
+                    userMentionEntities = new UserMentionEntityJSONImpl[len];
                     for (int i = 0; i < len; i++) {
                         userMentionEntities[i] = new UserMentionEntityJSONImpl(userMentionsArray.getJSONObject(i));
                     }
@@ -146,7 +146,7 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
                 if (!entities.isNull("urls")) {
                     JSONArray urlsArray = entities.getJSONArray("urls");
                     len = urlsArray.length();
-                    urlEntities = new URLEntity[len];
+                    urlEntities = new URLEntityJSONImpl[len];
                     for (int i = 0; i < len; i++) {
                         urlEntities[i] = new URLEntityJSONImpl(urlsArray.getJSONObject(i));
                     }
@@ -155,7 +155,7 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
                 if (!entities.isNull("hashtags")) {
                     JSONArray hashtagsArray = entities.getJSONArray("hashtags");
                     len = hashtagsArray.length();
-                    hashtagEntities = new HashtagEntity[len];
+                    hashtagEntities = new HashtagEntityJSONImpl[len];
                     for (int i = 0; i < len; i++) {
                         hashtagEntities[i] = new HashtagEntityJSONImpl(hashtagsArray.getJSONObject(i));
                     }
@@ -164,16 +164,16 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
                 if (!entities.isNull("media")) {
                     JSONArray mediaArray = entities.getJSONArray("media");
                     len = mediaArray.length();
-                    mediaEntities = new MediaEntity[len];
+                    mediaEntities = new MediaEntityJSONImpl[len];
                     for (int i = 0; i < len; i++) {
                         mediaEntities[i] = new MediaEntityJSONImpl(mediaArray.getJSONObject(i));
                     }
                 }
             }
-            userMentionEntities = userMentionEntities == null ? new UserMentionEntity[0] : userMentionEntities;
-            urlEntities = urlEntities == null ? new URLEntity[0] : urlEntities;
-            hashtagEntities = hashtagEntities == null ? new HashtagEntity[0] : hashtagEntities;
-            mediaEntities = mediaEntities == null ? new MediaEntity[0] : mediaEntities;
+            userMentionEntities = userMentionEntities == null ? new UserMentionEntityJSONImpl[0] : userMentionEntities;
+            urlEntities = urlEntities == null ? new URLEntityJSONImpl[0] : urlEntities;
+            hashtagEntities = hashtagEntities == null ? new HashtagEntityJSONImpl[0] : hashtagEntities;
+            mediaEntities = mediaEntities == null ? new MediaEntityJSONImpl[0] : mediaEntities;
             text = HTMLEntity.unescapeAndSlideEntityIncdices(json.getString("text"), userMentionEntities,
                     urlEntities, hashtagEntities, mediaEntities);
             if (!json.isNull("current_user_retweet")) {
@@ -186,13 +186,7 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
 
     @Override
     public int compareTo(Status that) {
-        long delta = this.id - that.getId();
-        if (delta < Integer.MIN_VALUE) {
-            return Integer.MIN_VALUE;
-        } else if (delta > Integer.MAX_VALUE) {
-            return Integer.MAX_VALUE;
-        }
-        return (int) delta;
+        return this.createdAt.compareTo(that.getCreatedAt());
     }
 
     /**
@@ -293,7 +287,7 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
     }
 
 
-    private User user = null;
+    private UserJSONImpl user = null;
 
     /**
      * {@inheritDoc}
@@ -466,10 +460,4 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
     	
     	return temp;
     }
-
-	@Override
-	public Status fromString(String s) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

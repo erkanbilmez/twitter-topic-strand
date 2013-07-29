@@ -15,10 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import twitter4j.Status;
-import twitter4j.internal.json.StatusFactory;
+import twitter4j.StatusFactory;
 import twitter4j.internal.json.StatusJSONImpl;
 import twittertopicstrand.util.FileOperations;
 
@@ -32,13 +35,15 @@ public class CronJob implements Runnable {
 		this.destFolderPath = destFolderPath;		
 	}
 	
-	public static LocalDate getLocalDate(String fileName) {
-		LocalDate rVal;
+	public static DateTime getFileDate(String fileName) {
+		DateTime rVal;
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yy-MM-dd-HH");
 		
 		int index = fileName.lastIndexOf(File.separator);
-		String s = fileName.substring(index+1, index + 11);
+		String s = fileName.substring(index+1, index + 14);
 		
-		rVal = new LocalDate(s);
+		rVal = fmt.parseDateTime(s);
 		
 		return rVal;
 	}
@@ -96,27 +101,28 @@ public class CronJob implements Runnable {
 		List<String> lines = FileOperations.readFile(sourceFilePath);
 		List<Status> statuses = new ArrayList<Status>(lines.size());
 		for(int i=0;i<lines.size();i++){
-			Status status = StatusFactory.fromString(lines.get(i)); 
+			String currentLine = lines.get(i);
+			Status status = StatusFactory.fromString(currentLine); 
 			statuses.add(status);
-			myMap.put(status.getId(), lines.get(i));
 		}
 		Collections.sort(statuses);
 		
 		for(int i=0;i<statuses.size();i++){
-			FileOperations.addLine( myMap.get(statuses.get(i).getId()), destFilePath);
+			FileOperations.addLine( statuses.get(i).toFriendlyString(), destFilePath);
 		}
 	}
 	
-	private static void processThisDate(String sourceFolderPath, String destFolderPath, LocalDate dt) throws IOException{				
+	private static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
 		String[] files = FileOperations.getFiles(sourceFolderPath);
 		
 		List<String> tempFiles = new ArrayList<String>();
 	
 		for(int i=0;i<files.length;i++){
 			String currentFile = files[i];
-			LocalDate localDate = getLocalDate(currentFile);
 			
-			if(localDate.isEqual(dt)) {				
+			DateTime fileDate = getFileDate(currentFile);
+			
+			if(fileDate.isEqual(dt)) {				
 				tempFiles.add(currentFile);
 			}
 		}
@@ -136,24 +142,28 @@ public class CronJob implements Runnable {
 		
 		sortFile(unSortedDestFile, destFile);
 		
+		File f1 = new File(unSortedDestFile);
+		f1.delete();
+		
 		createZipFile(destFile, destFile + ".gz");	
 		
-		File f = new File(destFile);
-		f.delete();
+		File f2 = new File(destFile);
+		f2.delete();
 	}
 	
 	public void tick() {
 		String[] files = FileOperations.getFiles(this.sourceFolderPath);
 		
-		for(int i=0;i<files.length;i++) {
-			LocalDate now = new LocalDate();
-			
-			String currentFile = files[i];
-			LocalDate localDate = getLocalDate(currentFile);
+		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0);
 		
-			if(localDate.isBefore(now)){
+		for(int i=0;i<files.length;i++) {
+			String currentFile = files[i];
+			
+			DateTime fileDate = getFileDate(currentFile);
+			
+			if(fileDate.isBefore(now)){
 				try {
-					processThisDate(this.sourceFolderPath, this.destFolderPath, localDate);
+					processThisDate(this.sourceFolderPath, this.destFolderPath, fileDate);
 				} catch (IOException e) { System.out.println(e.getMessage()); }
 				
 				i=0;
@@ -167,7 +177,7 @@ public class CronJob implements Runnable {
 		while(true) {
 			this.tick();
 			try {
-				Thread.sleep(1000 * 60 * 60 * 2);
+				Thread.sleep(1000 * 60 * 5);
 			} catch (InterruptedException e) { System.out.println(e.getMessage()); }
 		}
 		

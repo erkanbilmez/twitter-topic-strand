@@ -25,6 +25,7 @@ import java.io.Serializable;
  * @since Twitter4J 2.1.9
  */
 public interface UserMentionEntity extends Serializable {
+		
     /**
      * Returns the name mentioned in the status.
      *

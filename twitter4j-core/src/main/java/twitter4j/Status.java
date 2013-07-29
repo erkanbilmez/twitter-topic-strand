@@ -25,6 +25,7 @@ import java.util.Date;
  */
 public interface Status extends Comparable<Status>, TwitterResponse,
         EntitySupport, java.io.Serializable {
+		
     /**
      * Return the created_at
      *
@@ -172,6 +173,4 @@ public interface Status extends Comparable<Status>, TwitterResponse,
     boolean isPossiblySensitive();
     
     String toFriendlyString();
-    
-    Status fromString(String s);  
 }

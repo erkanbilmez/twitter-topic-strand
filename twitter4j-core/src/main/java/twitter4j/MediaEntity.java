@@ -17,6 +17,8 @@ package twitter4j;
 
 import java.util.Map;
 
+import twitter4j.internal.json.MediaEntityJSONImpl;
+
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.2.3
@@ -48,7 +50,7 @@ public interface MediaEntity extends URLEntity {
      *
      * @return size variations of the media
      */
-    Map<Integer, Size> getSizes();
+    Map<Integer, MediaEntityJSONImpl.Size> getSizes();
 
     interface Size extends java.io.Serializable {
         Integer THUMB = 0;

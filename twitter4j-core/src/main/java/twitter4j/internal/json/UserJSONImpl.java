@@ -44,8 +44,8 @@ public final class UserJSONImpl extends TwitterResponseImpl implements User, jav
     private String screenName;
     private String location;
     private String description;
-    private URLEntity[] descriptionURLEntities;
-    private URLEntity urlEntity;
+    private URLEntityJSONImpl[] descriptionURLEntities;
+    private URLEntityJSONImpl urlEntity;
     private boolean isContributorsEnabled;
     private String profileImageUrl;
     private String profileImageUrlHttps;
@@ -118,10 +118,10 @@ public final class UserJSONImpl extends TwitterResponseImpl implements User, jav
             
             // descriptionUrlEntities <=> entities/descriptions/urls[]
             descriptionURLEntities = getURLEntitiesFromJSON(json, "description");
-            descriptionURLEntities = descriptionURLEntities == null ? new URLEntity[0] : descriptionURLEntities;
+            descriptionURLEntities = descriptionURLEntities == null ? new URLEntityJSONImpl[0] : descriptionURLEntities;
             
             // urlEntity <=> entities/url/urls[]
-            URLEntity[] urlEntities = getURLEntitiesFromJSON(json, "url");
+            URLEntityJSONImpl[] urlEntities = getURLEntitiesFromJSON(json, "url");
             if (urlEntities != null && urlEntities.length > 0) {
                 urlEntity = urlEntities[0];
             }
@@ -181,7 +181,7 @@ public final class UserJSONImpl extends TwitterResponseImpl implements User, jav
      * @throws JSONException
      * @throws TwitterException
      */
-    private static URLEntity[] getURLEntitiesFromJSON(JSONObject json, String category) throws JSONException, TwitterException {
+    private static URLEntityJSONImpl[] getURLEntitiesFromJSON(JSONObject json, String category) throws JSONException, TwitterException {
         if (!json.isNull("entities")) {
             JSONObject entitiesJSON = json.getJSONObject("entities");
             if (!entitiesJSON.isNull(category)) {
@@ -189,7 +189,7 @@ public final class UserJSONImpl extends TwitterResponseImpl implements User, jav
                 if (!descriptionEntitiesJSON.isNull("urls")) {
                     JSONArray urlsArray = descriptionEntitiesJSON.getJSONArray("urls");
                     int len = urlsArray.length();
-                    URLEntity[] urlEntities = new URLEntity[len];
+                    URLEntityJSONImpl[] urlEntities = new URLEntityJSONImpl[len];
                     for (int i = 0; i < len; i++) {
                         urlEntities[i] = new URLEntityJSONImpl(urlsArray.getJSONObject(i));
                     }
@@ -719,13 +719,4 @@ public final class UserJSONImpl extends TwitterResponseImpl implements User, jav
     	
     	return temp;
     }
-
-	public static User fromString(String s) {
-		GsonBuilder builder = new GsonBuilder();    	
-    	Gson gson = builder.create();
-    	
-    	UserJSONImpl rVal = gson.fromJson(s, UserJSONImpl.class);
-    	
-    	return rVal;
-	}
 }

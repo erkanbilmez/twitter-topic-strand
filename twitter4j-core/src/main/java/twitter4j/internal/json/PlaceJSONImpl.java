@@ -35,7 +35,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.getUnescapedString;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.1
  */
-final class PlaceJSONImpl extends TwitterResponseImpl implements Place, java.io.Serializable {
+public final class PlaceJSONImpl extends TwitterResponseImpl implements Place, java.io.Serializable {
     private String name;
     private String streetAddress;
     private String countryCode;

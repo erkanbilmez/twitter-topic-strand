@@ -28,13 +28,13 @@ import twitter4j.internal.org.json.JSONObject;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.9
  */
-/*package*/ class UserMentionEntityJSONImpl extends EntityIndex implements UserMentionEntity {
+public class UserMentionEntityJSONImpl extends EntityIndex implements UserMentionEntity {
     private static final long serialVersionUID = 6580431141350059702L;
     private String name;
     private String screenName;
     private long id;
 
-    /* package */ UserMentionEntityJSONImpl(JSONObject json) throws TwitterException {
+    public UserMentionEntityJSONImpl(JSONObject json) throws TwitterException {
         super();
         init(json);
     }
@@ -49,7 +49,7 @@ import twitter4j.internal.org.json.JSONObject;
     }
 
     /* For serialization purposes only. */
-    /* package */ UserMentionEntityJSONImpl() {
+    public UserMentionEntityJSONImpl() {
 
     }
 
