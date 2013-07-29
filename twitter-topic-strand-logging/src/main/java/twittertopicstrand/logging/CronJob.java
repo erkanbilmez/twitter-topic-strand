@@ -112,7 +112,7 @@ public class CronJob implements Runnable {
 		}
 	}
 	
-	private static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
+	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
 		String[] files = FileOperations.getFiles(sourceFolderPath);
 		
 		List<String> tempFiles = new ArrayList<String>();
@@ -127,8 +127,8 @@ public class CronJob implements Runnable {
 			}
 		}
 		
-		String unSortedDestFile = destFolderPath + File.separator + dt.toString() + "-unsorted.txt";
-		String destFile = destFolderPath + File.separator + dt.toString() + ".txt";
+		String unSortedDestFile = destFolderPath + File.separator + dt.toString("yy-MM-dd-HH") + "-unsorted.txt";
+		String destFile = destFolderPath + File.separator + dt.toString("yy-MM-dd-HH") + ".txt";
 				
 		String[] tempFilesArray = tempFiles.toArray(new String[tempFiles.size()]);
 		
@@ -136,7 +136,6 @@ public class CronJob implements Runnable {
 		
 		for(int i=0;i<tempFilesArray.length;i++) {
 			File f = new File(tempFilesArray[i]);
-			System.out.println(tempFilesArray[i]);
 			f.delete();
 		}
 		
@@ -154,8 +153,8 @@ public class CronJob implements Runnable {
 	public void tick() {
 		String[] files = FileOperations.getFiles(this.sourceFolderPath);
 		
-		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0);
-		
+		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0).minusHours(2); // for safety
+				
 		for(int i=0;i<files.length;i++) {
 			String currentFile = files[i];
 			

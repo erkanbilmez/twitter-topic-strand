@@ -27,6 +27,8 @@ import twitter4j.internal.org.json.JSONObject;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -460,4 +462,23 @@ public final class StatusJSONImpl extends TwitterResponseImpl implements Status,
     	
     	return temp;
     }
+
+	@Override
+	public LightStatus toLightStatus() {
+		LightStatus rVal = new LightStatus();
+		
+		rVal.id = this.getId();
+		rVal.userId = this.getUser().getId();
+		rVal.createdAt = this.getCreatedAt();
+		rVal.retweetedStatusId = ( this.isRetweet() ? this.getRetweetedStatus().getId() : -1L );
+		rVal.retweetedStatusUserId = ( this.isRetweet() ? this.getRetweetedStatus().getUser().getId() : -1L );
+		
+		rVal.hashTags = new String[this.hashtagEntities.length];
+		
+		for(int i=0;i<this.hashtagEntities.length;i++) {
+			rVal.hashTags[i] = this.hashtagEntities[i].getText();
+		}
+				
+		return rVal;
+	}
 }

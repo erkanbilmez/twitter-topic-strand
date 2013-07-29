@@ -37,8 +37,6 @@ public class FileOperations {
     	for(int i=0;i<files.length;i++){
     		String currentFile = files[i];
     		
-    		System.out.println(currentFile);
-    		
     		List<String> lines = FileOperations.readFile(currentFile);
     		
     		for(int j=0;j<lines.size();j++) {    			

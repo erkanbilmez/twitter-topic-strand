@@ -173,4 +173,6 @@ public interface Status extends Comparable<Status>, TwitterResponse,
     boolean isPossiblySensitive();
     
     String toFriendlyString();
+    
+    LightStatus toLightStatus();
 }

@@ -27,12 +27,12 @@ public class StreamWorkerClient implements Runnable {
         this.outputDir = outputDir;
     }
     
-    private String getFileName() {
+    private String getFileName(Status s) {
     	String rVal = outputDir + File.separator;
     	
-    	DateTime now = new DateTime();
+    	DateTime dt = new DateTime(s.getCreatedAt());
     	
-    	rVal += now.toString("yyyy-MM-dd-hh");
+    	rVal += dt.toString("yyyy-MM-dd-HH");
     	rVal += "-tID" +  String.format("%04d", this.threadID) + ".txt";
     	
     	return rVal;
@@ -87,7 +87,7 @@ public class StreamWorkerClient implements Runnable {
 			
 			@Override
 			public void onStatus(Status arg0) {				
-				String fileName = getFileName();
+				String fileName = getFileName(arg0);
 				StatusJSONImpl s = (StatusJSONImpl)arg0;
 				FileOperations.addLine(s.toFriendlyString(), fileName);
 			}

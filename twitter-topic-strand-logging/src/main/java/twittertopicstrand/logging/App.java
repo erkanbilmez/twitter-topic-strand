@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
 
+import twitter4j.LightStatus;
 import twitter4j.Status;
 import twitter4j.StatusFactory;
 import twitter4j.Twitter;
@@ -37,12 +38,13 @@ import com.google.gson.GsonBuilder;
 public class App {
 	
     public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException, TwitterException, JSONException  {
-    	
+
     	String selectedUsersPath = "/home/mll2/Desktop/twitter-data/selectedUserIds.txt";
     	String apiUsersPath = "/home/mll2/Desktop/twitter-data/api-users.xml";
     	String tempOutputPath = "/home/mll2/Desktop/twitter-data/tempTweets";
     	String finalOutputPath = "/home/mll2/Desktop/twitter-data/finalTweets";
     	
     	StreamWorker.startStreaming(selectedUsersPath, apiUsersPath, tempOutputPath, finalOutputPath);
-	}
+    	
+    }
 }
