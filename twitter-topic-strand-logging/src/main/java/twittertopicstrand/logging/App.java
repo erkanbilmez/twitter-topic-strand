@@ -46,5 +46,7 @@ public class App {
     	
     	StreamWorker.startStreaming(selectedUsersPath, apiUsersPath, tempOutputPath, finalOutputPath);
     	
+    	System.out.println("bye");
+    	
     }
 }
