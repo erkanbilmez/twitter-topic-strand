@@ -95,16 +95,18 @@ public class CronJob implements Runnable {
 	}
 	
 	public static void sortFile(String sourceFilePath, String destFilePath) throws IOException {
+		List<Status> statuses = new ArrayList<Status>();		
+		Status temp;
 		
-		Map<Long, String> myMap = new HashMap<Long,String>();
+		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+        String line;
+        
+        while ((line = br.readLine()) != null) {
+        	temp = StatusFactory.fromString(line);
+        	statuses.add(temp);
+        }
+        br.close();
 		
-		List<String> lines = FileOperations.readFile(sourceFilePath);
-		List<Status> statuses = new ArrayList<Status>(lines.size());
-		for(int i=0;i<lines.size();i++){
-			String currentLine = lines.get(i);
-			Status status = StatusFactory.fromString(currentLine); 
-			statuses.add(status);
-		}
 		Collections.sort(statuses);
 		
 		for(int i=0;i<statuses.size();i++){
@@ -156,8 +158,8 @@ public class CronJob implements Runnable {
 		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0).minusHours(2); // for safety
 				
 		for(int i=0;i<files.length;i++) {
-			String currentFile = files[i];
-			
+			String currentFile = files[i];			
+
 			DateTime fileDate = getFileDate(currentFile);
 			
 			if(fileDate.isBefore(now)){

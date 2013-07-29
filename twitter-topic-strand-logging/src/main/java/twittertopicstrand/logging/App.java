@@ -45,8 +45,7 @@ public class App {
     	String finalOutputPath = "/home/mll2/Desktop/twitter-data/finalTweets";
     	
     	StreamWorker.startStreaming(selectedUsersPath, apiUsersPath, tempOutputPath, finalOutputPath);
-    	
-    	System.out.println("bye");
-    	
+    
+    	System.out.println("bye");    	
     }
 }

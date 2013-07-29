@@ -12,13 +12,14 @@ import com.google.gson.GsonBuilder;
 
 import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONException;
+import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.MapOperations;
 
 public class DataAnalyzer{
 	
-	private static LinkedHashMap<String, LinkedHashMap> finalJSON;
-
+  	static JSONObject finalJSON = new JSONObject();
+	
 	public static Map<String, Integer> createHashMap(String folderPath) throws IOException {
 		
 		LightStatusSource statusSource = new LightStatusSource(folderPath);
@@ -103,15 +104,15 @@ public class DataAnalyzer{
 						
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
 			
-			// TopicAnalyzer analyzer = new TopicAnalyzer(entry.getKey(), entry.getValue());
+			TopicAnalyzer analyzer = new TopicAnalyzer(entry.getKey(), entry.getValue());
 			
-			//finalJSON.put(entry.getKey(), analyzer.toJSONObject());	
+			finalJSON.put(entry.getKey(), analyzer.toJSONObject());	
 		}		
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String finalOutput = gson.toJson(finalJSON);
+		String finalOutput = gson.toJson( finalJSON );
 		
-		FileOperations.writeFile(finalOutput, "beauty.txt");
+		FileOperations.writeFile(finalOutput, "output.txt");
 	}
 
 }
