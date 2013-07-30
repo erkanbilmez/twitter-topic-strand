@@ -20,6 +20,10 @@ public class LightStatusSource {
 		this.files = FileOperations.getFiles(folderPath);
 	}
 	
+	public String getCurrentFileName(){
+		return this.files[this.currentIndex];
+	}
+	
 	public boolean iterate() {
 		if(currentIndex == files.length - 1){
 			return false;

@@ -155,14 +155,14 @@ public class CronJob implements Runnable {
 	public void tick() {
 		String[] files = FileOperations.getFiles(this.sourceFolderPath);
 		
-		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0).minusHours(2); // for safety
+		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0).minusHours(1); // for safety
 				
 		for(int i=0;i<files.length;i++) {
 			String currentFile = files[i];			
 
 			DateTime fileDate = getFileDate(currentFile);
 			
-			if(fileDate.isBefore(now)){
+			if(fileDate.isBefore(now)) {
 				try {
 					processThisDate(this.sourceFolderPath, this.destFolderPath, fileDate);
 				} catch (IOException e) { System.out.println(e.getMessage()); }

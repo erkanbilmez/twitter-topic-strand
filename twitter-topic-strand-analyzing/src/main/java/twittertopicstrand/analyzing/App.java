@@ -1,19 +1,29 @@
 package twittertopicstrand.analyzing;
 
+import java.io.IOException;
+
 import org.joda.time.DateTime;
+
+import twitter4j.LightStatus;
 
 /**
  * Hello world!
  *
  */
 public class App {
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws IOException {
         
-    	String sourceDirectory = "/home/mll2/Desktop/lightStatuses";    	
+    	String sourceDirectory = "/home/mll2/Desktop/x";    	
     	
-    	System.out.println( "Hello World!" );
+    	LightStatusSource lsSource = new LightStatusSource(sourceDirectory);
     	
+    	do{
+    		LightStatus[] chunk = lsSource.getChunk();
+    		System.out.println(lsSource.getCurrentFileName());
 
+    		System.out.println(chunk.length);
+    		
+    	}while(lsSource.iterate());
     	
     }
 }
