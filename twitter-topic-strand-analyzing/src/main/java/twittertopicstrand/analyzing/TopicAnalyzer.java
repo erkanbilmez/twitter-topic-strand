@@ -14,280 +14,115 @@ import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 
 public class TopicAnalyzer {
-	
-	// Params:
-	int lowThreshold = 3;
-	int highThreshold = 50;
-	
 
-	String hashTag;
+	String topicIdentifier;
 	String tweetCount;
 	String participantCount;
+	
 	DateTime firstDate;
 	DateTime lastDate;
-	List<UserAnalyzer> analyzers;
 	
-	List<LightStatus> statuses;
+	UserAnalyzer analyzer;
+	LightStatus[] statuses;
 	      
-	public TopicAnalyzer(String hashtag, List<LightStatus> statuses) throws IOException {
+	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws IOException {
 		
+		this.topicIdentifier = topicIdentifier;
 		this.statuses = statuses;
-		this.hashTag = hashtag;
-				
-		List<Hour> hours = GetHourList(statuses);
-		List<List<Hour>> hourGroups = Group(hours, lowThreshold, highThreshold);
-		List<GroupDisc> discGroups = new ArrayList<GroupDisc>();
 		
-		for (int i=0; i<hourGroups.size(); i++)
-			discGroups.add(new GroupDisc(hourGroups.get(i)));
+		this.analyzer = new UserAnalyzer( this.topicIdentifier, statuses );
 		
-		List<List<LightStatus>> statusGroups = new ArrayList<List<LightStatus>>();
-		
-		for (int i=0; i<discGroups.size(); i++)
-			statusGroups.add(new ArrayList<LightStatus>());
-		
-		int hourId = 0;
-		for (LightStatus m : statuses) {
-			hourId = UserAnalyzer.GetHourId(m.createdAt);
-			for (int i=0; i<discGroups.size(); i++) {
-				if (hourId >= discGroups.get(i).StartHour && hourId <= discGroups.get(i).EndHour) {
-					statusGroups.get(i).add(m);
-					break;
-				}
-			}
-		}
-		
-		hours.clear();
-		hourGroups.clear();
-		discGroups.clear();
-		
-		this.analyzers =  new ArrayList<UserAnalyzer>();
-		for (int i=0; i<statusGroups.size(); i++) {
-			UserAnalyzer analyzer = new UserAnalyzer(this.hashTag);
-			analyzer.Load(statusGroups.get(i));
-			analyzer.AnalyzeHeroes();
-			analyzer.AnalyzeVeterans();
-			this.analyzers.add(analyzer);
-		}
+		analyzer.AnalyzeHeroes();
+		analyzer.AnalyzeVeterans();
 	}
 	
-	public List<Hour> GetHourList (List<LightStatus> statuses)	{		
-		List<Hour> hours = new ArrayList<Hour>();
+	public JSONObject toJSONObject() throws JSONException {		
 		
-		int hourIndex = -1;
-		int hourId = 0;
-		for (int i=0; i<statuses.size(); i++)
-		{
-			hourIndex = -1;
-			hourId = UserAnalyzer.GetHourId(statuses.get(i).createdAt);
-			for (int j=0; j<hours.size(); j++)
-				if (hours.get(j).HourId == hourId)
-				{
-					hourIndex = j;
-					break;
-				}
-			
-			if (hourIndex == -1)
-				hours.add(new Hour(hourId, 1));
-			else
-				hours.get(hourIndex).Count++;
-		}
-		return hours;
-	}
-	
-	public List<List<Hour>> Group (List<Hour> hours, int lowThreshold, int highTreshold) 	{			
-		if (hours.size() == 0)
-			return null;
+		JSONObject rVal = new JSONObject();
 		
-		boolean hasHigh = false;
-		for (int i=0; i<hours.size(); i++)
-			if (hours.get(i).Count >= highTreshold)
-			{
-				hasHigh = true;
-				break;
-			}
+		rVal.put("Hashtag", analyzer.Hashtag);
+		rVal.put("TweetCount", analyzer.TweetCount);
+		rVal.put("ParticipantCount", analyzer.GetParticipantCount());
+		rVal.put("VeteranCount", analyzer.GetVeteranCount());
+		rVal.put("HeroCount", analyzer.GetHeroCount());
+		rVal.put("FirstHour", analyzer.FirstHour);
+		rVal.put("LastHour", analyzer.LastHour);
+		rVal.put("Sequence", analyzer.Duration());
 		
-		if (!hasHigh)
-			return null;			
+		List<TimeNode> volumeTimeNodes = new ArrayList<TimeNode>();
 		
-		for (int i=hours.size()-1; i>=0; i--)
-			if (hours.get(i).Count < lowThreshold)
-				hours.remove(i);
-		
-		if (hours.size() == 0)
-			return null;
-		
-		Collections.sort(hours, new MyComparator());
-		
-		int lastHourId = -1;
-		int currentHourId = 0;
-		boolean groupHasHigh = false;
-		
-		List<List<Hour>> result = new ArrayList<List<Hour>>();
-		List<Hour> group = new ArrayList<Hour>();
-		
-		for (int i=0; i<hours.size(); i++)
-		{
-			currentHourId  = hours.get(i).HourId;
-			if (lastHourId == -1)
-			{
-				group.add(hours.get(i));
-				lastHourId = currentHourId;
-			}
-			else if (currentHourId == lastHourId + 1)
-			{
-				group.add(hours.get(i));
-				lastHourId = currentHourId;
-			}
-			else
-			{
-				groupHasHigh = false;
-				for (int j=0; j<group.size(); j++)
-					if (group.get(j).Count >= highTreshold)
-					{
-						groupHasHigh = true;
-						break;
-					}
-				
-				if (groupHasHigh)
-					result.add(group);
-				
-				group = new ArrayList<Hour>();
-				lastHourId = -1;
-			}
+		for (int i=analyzer.FirstHour; i<=analyzer.LastHour; i++) {
+			TimeNode t = new TimeNode();
+			t.HourId = i;
+			volumeTimeNodes.add(t);
 		}
 		
-		result.add(group);
-		hours.clear();
-		
-		return result;
-	}
-	
-	public void Load (List<LightStatus> mlist)	{
-		int lowThreshold = 3;
-		int highThreshold = 50;
-		
-		List<Hour> hours = new ArrayList<Hour>();
-		
-		int hourIndex = -1;
-		int hourId = 0;
-		for (int i=0; i<mlist.size(); i++)
-		{
-			hourIndex = -1;
-			hourId = UserAnalyzer.GetHourId(mlist.get(i).createdAt);
-			for (int j=0; j<hours.size(); j++)
-				if (hours.get(j).HourId == hourId)
-				{
-					hourIndex = j;
-					break;
-				}
-			
-			if (hourIndex == -1)
-				hours.add(new Hour(hourId, 1));
-			else
-				hours.get(hourIndex).Count++;
+		for (TimeNode t : volumeTimeNodes) {
+			t.TweetCount = analyzer.GetTweetCount(t.HourId);
+			t.ParticipantCount = analyzer.GetParticipantCount(t.HourId);
+			t.VeteranCount = analyzer.GetVeteranCount(t.HourId);
+			t.HeroCount = analyzer.GetHeroCount(t.HourId);
 		}
 		
-		List<List<Hour>> groups = Group(hours, lowThreshold, highThreshold);
-		if (groups == null)
-			return;
-	}
-	
-	public List<JSONObject> toJSONObject() {
-		List<JSONObject> hashtagJsons = new ArrayList<JSONObject>();
+		//Create Volume lists
 		
-		for (UserAnalyzer analyzer : analyzers)
-		{
-			JSONObject rVal = new JSONObject();
-			
-			try {
-				rVal.append("Hashtag", analyzer.Hashtag);
-				rVal.append("TweetCount", analyzer.TweetCount);
-				rVal.append("ParticipantCount", analyzer.GetParticipantCount());
-				rVal.append("VeteranCount", analyzer.GetVeteranCount());
-				rVal.append("HeroCount", analyzer.GetHeroCount());
-				rVal.append("FirstHour", analyzer.FirstHour);
-				rVal.append("LastHour", analyzer.LastHour);
-				rVal.append("Sequence", analyzer.Duration());
-				
-				List<TimeNode> volumeTimeNodes = new ArrayList<TimeNode>();
-				
-				for (int i=analyzer.FirstHour; i<=analyzer.LastHour; i++)
-				{
-					TimeNode t = new TimeNode();
-					t.HourId = i;
-					volumeTimeNodes.add(t);
-				}
-				
-				for (TimeNode t : volumeTimeNodes)
-				{
-					t.TweetCount = analyzer.GetTweetCount(t.HourId);
-					t.ParticipantCount = analyzer.GetParticipantCount(t.HourId);
-					t.VeteranCount = analyzer.GetVeteranCount(t.HourId);
-					t.HeroCount = analyzer.GetHeroCount(t.HourId);
-				}
-				
-				//Create Volume lists
-				
-				JSONArray volume_tweet = new JSONArray();
-				JSONArray volume_participant = new JSONArray();
-				JSONArray volume_veteran = new JSONArray();
-				JSONArray volume_hero = new JSONArray();
-				
-				for (TimeNode t : volumeTimeNodes)
-				{
-					volume_tweet.put(t.TweetCount);
-					volume_participant.put(t.ParticipantCount);
-					volume_veteran.put(t.ParticipantCount);
-					volume_hero.put(t.ParticipantCount);
-				}
-				
-				rVal.append("TweetVolume", volume_tweet);
-				rVal.append("ParticipantVolume", volume_participant);
-				rVal.append("VeteranVolume", volume_veteran);
-				rVal.append("HeroVolume", volume_hero);
-				
-				//Create Summary Lists
-				
-				List<TimeNode> summaryTimeNodes = Summarize(volumeTimeNodes);
-				
-				JSONArray summary_tweet = new JSONArray();
-				JSONArray summary_participant = new JSONArray();
-				JSONArray summary_veteran = new JSONArray();
-				JSONArray summary_hero = new JSONArray();
-				
-				for (TimeNode t : summaryTimeNodes)
-				{
-					summary_tweet.put(t.TweetCount);
-					summary_participant.put(t.ParticipantCount);
-					summary_veteran.put(t.ParticipantCount);
-					summary_hero.put(t.ParticipantCount);
-				}
-	
-				rVal.append("TweetSummary", summary_tweet);
-				rVal.append("ParticipantSummary", summary_participant);
-				rVal.append("VeteranSummary", summary_veteran);
-				rVal.append("HeroSummary", summary_hero);
-			
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			hashtagJsons.add(rVal);
+		JSONArray volume_tweet = new JSONArray();
+		JSONArray volume_participant = new JSONArray();
+		JSONArray volume_veteran = new JSONArray();
+		JSONArray volume_hero = new JSONArray();
+		
+		for (TimeNode t : volumeTimeNodes) {
+			volume_tweet.put(t.TweetCount);
+			volume_participant.put(t.ParticipantCount);
+			volume_veteran.put(t.ParticipantCount);
+			volume_hero.put(t.ParticipantCount);
+		}
+		
+		rVal.put("TweetVolume", volume_tweet);
+		rVal.put("ParticipantVolume", volume_participant);
+		rVal.put("VeteranVolume", volume_veteran);
+		rVal.put("HeroVolume", volume_hero);
+		
+		//Create Summary Lists
+		
+		List<TimeNode> summaryTimeNodes = Summarize(volumeTimeNodes);
+		
+		JSONArray summary_tweet = new JSONArray();
+		JSONArray summary_participant = new JSONArray();
+		JSONArray summary_veteran = new JSONArray();
+		JSONArray summary_hero = new JSONArray();
+		
+		for (TimeNode t : summaryTimeNodes)	{
+			summary_tweet.put(t.TweetCount);
+			summary_participant.put(t.ParticipantCount);
+			summary_veteran.put(t.ParticipantCount);
+			summary_hero.put(t.ParticipantCount);
 		}
 
-		return hashtagJsons;
+		rVal.put("TweetSummary", summary_tweet);
+		rVal.put("ParticipantSummary", summary_participant);
+		rVal.put("VeteranSummary", summary_veteran);
+		rVal.put("HeroSummary", summary_hero);
+
+		return rVal;
 		
-//		Example code:
+		// Example code
 		
-//		JsonObject innerObject = new JsonObject();
-//		innerObject.addProperty("name", "john");
-//
-//		JsonObject jsonObject = new JsonObject();
-//		jsonObject.add("publishr", innerObject);
-//      {"publisher":{"name":"john"}}
-		
+//		JSONObject obj = new JSONObject();
+//    	obj.put("publisher", "hebe");
+//    	
+//    	JSONObject inner = new JSONObject();
+//    	inner.put("publisher", "sait");
+//    	
+//    	obj.put("a", inner);
+//    	
+//    	JSONArray arr = new JSONArray();
+//    	arr.put("a");
+//    	arr.put("b");
+//    	arr.put("c");
+//    	
+//    	obj.put("array", arr);
+				
 //		Output format:
 		
 //		{

@@ -2,6 +2,7 @@ package twittertopicstrand.analyzing;
 
 import java.util.List;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,19 +39,12 @@ public class LightStatusSource {
 		List<LightStatus> tempList = new ArrayList<LightStatus>();
 		
         BufferedReader br = new BufferedReader(new FileReader(this.files[this.currentIndex]));
+        
         String line;
+        LightStatus temp;
         
-        int counter = 0;
-        
-        while ((line = br.readLine()) != null) {
-        	LightStatus temp = null;
-			try{
-				temp = LightStatus.fromJSONString(line);
-			}
-			catch(Exception ex){
-				System.out.println(ex.getMessage());
-				System.out.println(line);				
-			}
+        while ((line = br.readLine()) != null) {			
+			temp = LightStatus.fromJSONString(line);			
 			tempList.add(temp);		
         }
         br.close();
@@ -63,4 +57,27 @@ public class LightStatusSource {
 	public void refresh() {
 		currentIndex = 0;				
 	}	
+	
+	public LightStatus[] getAll() throws IOException{
+		LightStatus[] rVal = null;
+		
+		List<LightStatus> tempList = new ArrayList<LightStatus>();
+		
+		for(int i=0;i<this.files.length;i++){
+	        BufferedReader br = new BufferedReader(new FileReader(this.files[this.currentIndex]));
+	        
+	        String line;
+	        LightStatus temp;
+	        
+	        while ((line = br.readLine()) != null) {			
+				temp = LightStatus.fromJSONString(line);			
+				tempList.add(temp);		
+	        }
+	        br.close();
+		}
+        
+		rVal = tempList.toArray(new LightStatus[tempList.size()]);
+		
+		return rVal;		
+	}
 }

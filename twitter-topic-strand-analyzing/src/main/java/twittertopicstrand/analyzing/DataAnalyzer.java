@@ -19,94 +19,45 @@ import twittertopicstrand.util.MapOperations;
 public class DataAnalyzer{
 	
   	static JSONObject finalJSON = new JSONObject();
-	
-	public static Map<String, Integer> createHashMap(String folderPath) throws IOException {
 		
-		LightStatusSource statusSource = new LightStatusSource(folderPath);
-		Map<String, Integer> rVal = new HashMap<String, Integer>();		
-		
-		do{
-			LightStatus[] chunk = statusSource.getChunk();
-			
-			for(int i=0;i<chunk.length;i++) {
-				for(int j=0;j<chunk[i].hashTags.length;j++){
-					String currentHashTag = chunk[i].hashTags[j].toLowerCase();
-					
-					if(!rVal.containsKey(currentHashTag)) {						
-						rVal.put(currentHashTag, 1);
-					}else{
-						rVal.put(currentHashTag, rVal.get(currentHashTag) + 1);
-					}		
-				}				
-			}
-			
-		}while(statusSource.iterate());
-		
-		return rVal;
-	}
-	
-	public static String[] getMostTweetedNTopics(String folderPath, int n) throws IOException {
-		String[] rVal = null;
-		
-		List<String> rValList = new ArrayList<String>();
-		
-		Map myHashMap = createHashMap(folderPath);
-		Map<String, Integer> sortedMap = MapOperations.sortMapByValue(myHashMap);
-		
-		int i = 0;
-		
-		for (Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
-			String temp = entry.getKey();
-			rValList.add(temp);
-			i++;
-			
-			if(i > n) {
-				break;
-			}
-		}
-		
-		rVal = rValList.toArray(new String[rValList.size()]);
-		
-		return rVal;		
-	}
-	
 	public static void analyze(String folderPath) throws IOException, JSONException {
 		
-		int mostNTopics = 10;
+		LightStatusSource lsSource = new LightStatusSource(folderPath);
+		LightStatus[] allLightStatuses = lsSource.getAll();
 		
-		String[] topics = getMostTweetedNTopics(folderPath, mostNTopics);
+		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		Map<String, List<LightStatus>> myMap = new HashMap<String, List<LightStatus>>();		
 		
-		for(int i=0;i<topics.length;i++) {
-			myMap.put(topics[i], new ArrayList<LightStatus>());
+		for(int i=0;i<hashTags.length;i++) {
+			myMap.put(hashTags[i], new ArrayList<LightStatus>());
 		}
-		
-		LightStatusSource statusSource = new LightStatusSource(folderPath);
-		
-		int numTweets = 0;
-		do{
-			LightStatus[] chunk = statusSource.getChunk();
-			
-			for(int i=0;i<chunk.length;i++) {
-				for(int j=0;j<chunk[i].hashTags.length;j++){
-					
-					LightStatus currentStatus = chunk[i];
-					String currentHashTag = currentStatus.hashTags[j].toLowerCase();
-					
-					if(myMap.containsKey(currentHashTag)){						
-						myMap.get(currentHashTag).add(currentStatus);
-					}					
-				}		
-				numTweets++;
-			}
-			
-		}while(statusSource.iterate());
+				
+		for(int i=0;i<allLightStatuses.length;i++) {
+			for(int j=0;j<allLightStatuses[i].hashTags.length;j++){
+				LightStatus currentStatus = allLightStatuses[i];				
+				String currentHashTag = currentStatus.hashTags[j].toLowerCase();
+				
+				if(myMap.containsKey(currentHashTag)){						
+					myMap.get(currentHashTag).add(currentStatus);
+				}					
+			}		
+		}
 						
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
 			
-			TopicAnalyzer analyzer = new TopicAnalyzer(entry.getKey(), entry.getValue());
+			String hashTag = entry.getKey();
+			List<LightStatus> lstStatus = entry.getValue();
 			
-			finalJSON.put(entry.getKey(), analyzer.toJSONObject());	
+			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
+			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+			
+			for(int i=0;i<topics.size();i++){
+				
+				String topicIdentifier = hashTag + "-" + String.valueOf(i);
+				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topics.get(i));
+				
+				finalJSON.put(topicIdentifier, analyzer.toJSONObject());					
+			}
 		}		
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

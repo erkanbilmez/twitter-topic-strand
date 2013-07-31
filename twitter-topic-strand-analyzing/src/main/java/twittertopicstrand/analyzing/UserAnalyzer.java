@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import twitter4j.LightStatus;
 
 public class UserAnalyzer {
+	
 	public Map<Long, UserTimeline> Users;
 	public int FirstHour;
 	public int LastHour;
@@ -19,18 +20,17 @@ public class UserAnalyzer {
 	public String Hashtag = "";
 	public Map<Integer, Integer> HourCounter;
 	
-	public List<UserTimeline> Heroes ;
+	public List<UserTimeline> Heroes;
 	public List<UserTimeline> Veterans;
 	
-	public UserAnalyzer (String hashtag)	{
+	public UserAnalyzer (String hashtag, LightStatus[] statuses ) {
 		this.Hashtag = hashtag;
 		this.Users = new HashMap<Long, UserTimeline>();
 		this.FirstHour = 0;
 		this.LastHour = 0;
 		this.TweetCount = 0;
 		this.HourCounter = new HashMap<Integer, Integer>();
-	}
-	
+	}	
 
 	public void Load (List<LightStatus> mlist)	{		
 		for (LightStatus ms : mlist)
