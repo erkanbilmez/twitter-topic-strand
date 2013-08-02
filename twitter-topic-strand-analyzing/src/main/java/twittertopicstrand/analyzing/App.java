@@ -12,6 +12,7 @@ import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
+import twittertopicstrand.sources.StatusSource;
 
 /**
  * Hello world!
@@ -19,11 +20,13 @@ import twitter4j.internal.org.json.JSONObject;
  */
 public class App {
     public static void main( String[] args ) throws IOException, JSONException {
-    	
+    
+    	System.out.println("hello world");
+
     	String statusSourceDir = "/home/mll2/Desktop/x";
     	String lightStatusSourceDir = "/home/mll2/Desktop/x2";
     	
-    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
+    	StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
     	DataAnalyzer.analyze(lightStatusSourceDir);    	
     }
 }

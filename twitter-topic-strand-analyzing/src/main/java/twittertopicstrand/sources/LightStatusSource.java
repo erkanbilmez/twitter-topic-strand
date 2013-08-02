@@ -1,4 +1,4 @@
-package twittertopicstrand.analyzing;
+package twittertopicstrand.sources;
 
 import java.util.List;
 import java.io.BufferedReader;
