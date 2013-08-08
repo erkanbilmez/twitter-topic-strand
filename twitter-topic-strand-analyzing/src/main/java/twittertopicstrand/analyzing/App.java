@@ -23,10 +23,10 @@ public class App {
     
     	System.out.println("hello world");
 
-    	String statusSourceDir = "/home/mll2/Desktop/x";
-    	String lightStatusSourceDir = "/home/mll2/Desktop/x2";
+    	String statusSourceDir = "/home/sait//Desktop/data";
+    	String lightStatusSourceDir = "/home/sait/Desktop/data2";
     	
-    	StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
+    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
     	DataAnalyzer.analyze(lightStatusSourceDir);    	
     }
 }

@@ -21,28 +21,36 @@ public class DataAnalyzer{
 	
   	static JSONObject finalJSON = new JSONObject();
 		
+  	private static Map<String, List<LightStatus>> splitByHashTag(String[] selectedHashTags, LightStatus[] statuses){
+  		
+  		Map<String, List<LightStatus>> rVal = new HashMap<String, List<LightStatus>>();
+  		
+  		for(int i=0;i<selectedHashTags.length;i++) {
+  			rVal.put(selectedHashTags[i].toLowerCase(), new ArrayList<LightStatus>());
+		}
+  		
+  		for(int i=0;i<statuses.length;i++) {
+			for(int j=0;j<statuses[i].hashTags.length;j++){
+				LightStatus currentStatus = statuses[i];				
+				String currentHashTag = currentStatus.hashTags[j].toLowerCase();
+				
+				if(rVal.containsKey(currentHashTag)){						
+					rVal.get(currentHashTag).add(currentStatus);
+				}					
+			}		
+		}
+  		
+  		return rVal;
+  	}
+  	
 	public static void analyze(String folderPath) throws IOException, JSONException {
 		
 		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		LightStatus[] allLightStatuses = lsSource.getAll();
 		
 		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
-		Map<String, List<LightStatus>> myMap = new HashMap<String, List<LightStatus>>();		
 		
-		for(int i=0;i<hashTags.length;i++) {
-			myMap.put(hashTags[i], new ArrayList<LightStatus>());
-		}
-				
-		for(int i=0;i<allLightStatuses.length;i++) {
-			for(int j=0;j<allLightStatuses[i].hashTags.length;j++){
-				LightStatus currentStatus = allLightStatuses[i];				
-				String currentHashTag = currentStatus.hashTags[j].toLowerCase();
-				
-				if(myMap.containsKey(currentHashTag)){						
-					myMap.get(currentHashTag).add(currentStatus);
-				}					
-			}		
-		}
+		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 						
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
 			
@@ -52,8 +60,7 @@ public class DataAnalyzer{
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 			
-			for(int i=0;i<topics.size();i++){
-				
+			for(int i=0;i<topics.size();i++) {
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
 				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topics.get(i));
 				
@@ -66,5 +73,4 @@ public class DataAnalyzer{
 		
 		FileOperations.writeFile(finalOutput, "output.txt");
 	}
-
 }

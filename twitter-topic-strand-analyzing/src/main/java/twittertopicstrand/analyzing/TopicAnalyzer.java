@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -12,98 +15,67 @@ import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
+import twittertopicstrand.util.HourOperations;
 
 public class TopicAnalyzer {
 
 	String topicIdentifier;
-	String tweetCount;
-	String participantCount;
-	
-	DateTime firstDate;
-	DateTime lastDate;
-	
-	UserAnalyzer analyzer;
 	LightStatus[] statuses;
-	      
+	
+	DateTime firstTime;
+	DateTime lastTime;
+	
+	HashSet<Long> allParticipants = new HashSet<Long>();
+		      
+	VeteranAnalyzer veteranAnalyzer;
+	HeroAnalyzer heroAnalyzer;
+	
 	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws IOException {
-		
 		this.topicIdentifier = topicIdentifier;
 		this.statuses = statuses;
 		
-		this.analyzer = new UserAnalyzer( this.topicIdentifier, statuses );
+		this.firstTime = new DateTime ( statuses[0].createdAt );
+		this.lastTime = new DateTime ( statuses[statuses.length - 1].createdAt );
 		
-		analyzer.AnalyzeHeroes();
-		analyzer.AnalyzeVeterans();
+		this.init();
+	}
+	
+	private void init(){
+		int length = HourOperations.getHourId(this.firstTime, this.lastTime) + 1;
+		
+		ArrayList < HashMap<Long, Integer> > participants = new ArrayList< HashMap<Long, Integer> > (length);
+		
+		for(int i=0;i<length;i++) {
+			participants.add( new HashMap<Long, Integer>() );
+		}
+			
+		for(int i=0;i<statuses.length;i++) {
+			long userId = statuses[i].userId;
+			int hourId = HourOperations.getHourId(this.firstTime, new DateTime ( statuses[i].createdAt ));
+		
+			int count = participants.get(hourId).containsKey(userId) ? participants.get(hourId).get(userId) : 0;
+			participants.get(hourId).put(userId, count + 1);
+		}
+		
+		this.veteranAnalyzer.analyze(participants, allParticipants);
+		this.heroAnalyzer.analyze(participants, allParticipants, this.statuses);
 	}
 	
 	public JSONObject toJSONObject() throws JSONException {		
 		
 		JSONObject rVal = new JSONObject();
 		
-		rVal.put("Hashtag", analyzer.Hashtag);
-		rVal.put("TweetCount", analyzer.TweetCount);
-		rVal.put("ParticipantCount", analyzer.GetParticipantCount());
-		rVal.put("VeteranCount", analyzer.GetVeteranCount());
-		rVal.put("HeroCount", analyzer.GetHeroCount());
-		rVal.put("FirstHour", analyzer.FirstHour);
-		rVal.put("LastHour", analyzer.LastHour);
-		rVal.put("Sequence", analyzer.Duration());
+		rVal.put("Hashtag", this.topicIdentifier);
+		rVal.put("TweetCount", this.statuses.length);
+	
+		rVal.put("ParticipantCount", this.allParticipants.size());
 		
-		List<TimeNode> volumeTimeNodes = new ArrayList<TimeNode>();
+		rVal.put("VeteranCount", this.veteranAnalyzer.veteranCount);
+		//rVal.put("HeroCount", this.heroAnalyzer.heroCount);
 		
-		for (int i=analyzer.FirstHour; i<=analyzer.LastHour; i++) {
-			TimeNode t = new TimeNode();
-			t.HourId = i;
-			volumeTimeNodes.add(t);
-		}
+		rVal.put("FirstHour", this.firstTime);
+		rVal.put("LastHour", this.lastTime);
 		
-		for (TimeNode t : volumeTimeNodes) {
-			t.TweetCount = analyzer.GetTweetCount(t.HourId);
-			t.ParticipantCount = analyzer.GetParticipantCount(t.HourId);
-			t.VeteranCount = analyzer.GetVeteranCount(t.HourId);
-			t.HeroCount = analyzer.GetHeroCount(t.HourId);
-		}
-		
-		//Create Volume lists
-		
-		JSONArray volume_tweet = new JSONArray();
-		JSONArray volume_participant = new JSONArray();
-		JSONArray volume_veteran = new JSONArray();
-		JSONArray volume_hero = new JSONArray();
-		
-		for (TimeNode t : volumeTimeNodes) {
-			volume_tweet.put(t.TweetCount);
-			volume_participant.put(t.ParticipantCount);
-			volume_veteran.put(t.ParticipantCount);
-			volume_hero.put(t.ParticipantCount);
-		}
-		
-		rVal.put("TweetVolume", volume_tweet);
-		rVal.put("ParticipantVolume", volume_participant);
-		rVal.put("VeteranVolume", volume_veteran);
-		rVal.put("HeroVolume", volume_hero);
-		
-		//Create Summary Lists
-		
-		List<TimeNode> summaryTimeNodes = Summarize(volumeTimeNodes);
-		
-		JSONArray summary_tweet = new JSONArray();
-		JSONArray summary_participant = new JSONArray();
-		JSONArray summary_veteran = new JSONArray();
-		JSONArray summary_hero = new JSONArray();
-		
-		for (TimeNode t : summaryTimeNodes)	{
-			summary_tweet.put(t.TweetCount);
-			summary_participant.put(t.ParticipantCount);
-			summary_veteran.put(t.ParticipantCount);
-			summary_hero.put(t.ParticipantCount);
-		}
-
-		rVal.put("TweetSummary", summary_tweet);
-		rVal.put("ParticipantSummary", summary_participant);
-		rVal.put("VeteranSummary", summary_veteran);
-		rVal.put("HeroSummary", summary_hero);
-
 		return rVal;
 		
 		// Example code
@@ -138,73 +110,5 @@ public class TopicAnalyzer {
 //			"HeroSummary" : [3,2,1,2,2,0,2,1], 	
 //			"VeteranSummary" : [3,2,1,2,2,0,2,1]
 //		}
-	}
-	
-	public List<TimeNode> Summarize (List<TimeNode> nodes)	{
-		List<TimeNode> summary = new ArrayList<TimeNode>();
-		
-		if (nodes.size() == 0)
-		{	
-			for (int i=0; i<10; i++)
-				summary.add(new TimeNode());
-			return summary;
-		}
-		
-		int size = nodes.size();
-		double part = (double) size / 10.0;
-		
-		for (int i=0; i<10; i++)
-		{
-			int pos = (int) part * i;
-			if (pos < size)
-				pos = size;
-			summary.add(nodes.get(pos));
-		}
-		
-		return summary;
-	}
-	
-	public class TimeNode {
-		public int HourId;
-		public int TweetCount;
-		public int ParticipantCount;
-		public int VeteranCount;
-		public int HeroCount;
-	}
-	
-	public class Hour {
-		public int HourId;
-		public int Count;
-		
-		public Hour (int h, int c)
-		{
-			HourId = h;
-			Count = c;
-		}
-	}
-	
-	public static class MyComparator implements Comparator<Hour> {
-		@Override
-		public int compare(Hour arg0, Hour arg1) {
-			return (arg0.HourId > arg1.HourId ? 1 : (arg0.HourId == arg1.HourId ? 0 : -1));
-		}
-	}
-	
-	public class GroupDisc 	{
-		public int StartHour;
-		public int EndHour;
-		
-		public GroupDisc (List<Hour> hour)
-		{
-			StartHour = 0;
-			EndHour = 0;
-			for (Hour h : hour)
-			{
-				if (StartHour == 0 || StartHour > h.HourId)
-					StartHour = h.HourId;
-				if (EndHour == 0 || EndHour < h.HourId)
-					EndHour = h.HourId;
-			}
-		}
 	}
 }
