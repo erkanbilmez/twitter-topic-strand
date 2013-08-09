@@ -47,7 +47,7 @@ public class HashtagSelector {
 			rValList.add(temp);
 			i++;
 			
-			if(i > n) {
+			if(i+1 > n) {
 				break;
 			}
 		}

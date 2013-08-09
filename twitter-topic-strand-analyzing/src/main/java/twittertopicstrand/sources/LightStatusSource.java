@@ -64,7 +64,7 @@ public class LightStatusSource {
 		List<LightStatus> tempList = new ArrayList<LightStatus>();
 		
 		for(int i=0;i<this.files.length;i++){
-	        BufferedReader br = new BufferedReader(new FileReader(this.files[this.currentIndex]));
+	        BufferedReader br = new BufferedReader(new FileReader(this.files[i]));
 	        
 	        String line;
 	        LightStatus temp;

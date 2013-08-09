@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // hello world.
@@ -24,6 +25,8 @@ public class FileOperations {
         File[] files = folder.listFiles();
         String [] absPaths = new String[files.length];
 
+        Arrays.sort(files);
+        
         for (int i=0; i<files.length; i++)
             absPaths[i] = files[i].getAbsolutePath();
 

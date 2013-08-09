@@ -58,14 +58,18 @@ public class DataAnalyzer{
 			List<LightStatus> lstStatus = entry.getValue();
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
-			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+//			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+//			
+//			for(int i=0;i<topics.size();i++) {
+//				String topicIdentifier = hashTag + "-" + String.valueOf(i);
+//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topics.get(i));
+//				
+//				finalJSON.put(topicIdentifier, analyzer.toJSONObject());					
+//			}
 			
-			for(int i=0;i<topics.size();i++) {
-				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topics.get(i));
-				
-				finalJSON.put(topicIdentifier, analyzer.toJSONObject());					
-			}
+			TopicAnalyzer analyzer = new TopicAnalyzer(hashTag, statuses);
+			finalJSON.put(hashTag, analyzer.toJSONObject());
+			
 		}		
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

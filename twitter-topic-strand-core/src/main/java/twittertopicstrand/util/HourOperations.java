@@ -8,7 +8,7 @@ public class HourOperations {
 	
 	public static int getHourId(DateTime start, DateTime dt){		
 		Duration d = new Duration(start, dt);
-		return (int) d.getMillis();
+		return (int) d.getMillis() / (1000 * 60 * 60);
 	}
 	
 }

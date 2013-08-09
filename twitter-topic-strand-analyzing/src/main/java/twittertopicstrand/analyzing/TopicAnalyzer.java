@@ -27,8 +27,8 @@ public class TopicAnalyzer {
 	
 	HashSet<Long> allParticipants = new HashSet<Long>();
 		      
-	VeteranAnalyzer veteranAnalyzer;
-	HeroAnalyzer heroAnalyzer;
+	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
+	HeroAnalyzer heroAnalyzer = new HeroAnalyzer();
 	
 	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws IOException {
 		this.topicIdentifier = topicIdentifier;
@@ -52,9 +52,13 @@ public class TopicAnalyzer {
 		for(int i=0;i<statuses.length;i++) {
 			long userId = statuses[i].userId;
 			int hourId = HourOperations.getHourId(this.firstTime, new DateTime ( statuses[i].createdAt ));
-		
+			
 			int count = participants.get(hourId).containsKey(userId) ? participants.get(hourId).get(userId) : 0;
 			participants.get(hourId).put(userId, count + 1);
+			
+			if(!allParticipants.contains(userId)){
+				allParticipants.add(userId);
+			}
 		}
 		
 		this.veteranAnalyzer.analyze(participants, allParticipants);

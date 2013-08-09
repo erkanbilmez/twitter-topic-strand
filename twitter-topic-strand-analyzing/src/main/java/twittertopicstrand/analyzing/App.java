@@ -13,6 +13,7 @@ import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.sources.StatusSource;
+import twittertopicstrand.util.FileOperations;
 
 /**
  * Hello world!
@@ -26,7 +27,13 @@ public class App {
     	String statusSourceDir = "/home/sait//Desktop/data";
     	String lightStatusSourceDir = "/home/sait/Desktop/data2";
     	
+    	String[] files = FileOperations.getFiles(lightStatusSourceDir);
+    	
+    	for(int i=0;i<files.length;i++){
+    		System.out.println(files[i]);
+    	}
+    	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	DataAnalyzer.analyze(lightStatusSourceDir);    	
+    	//DataAnalyzer.analyze(lightStatusSourceDir);    	
     }
 }
