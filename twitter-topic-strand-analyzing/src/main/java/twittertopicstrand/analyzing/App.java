@@ -1,6 +1,8 @@
 package twittertopicstrand.analyzing;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -12,6 +14,8 @@ import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
+import twittertopicstrand.converter.BilkentToLightStatusConverter;
+import twittertopicstrand.converter.BilkentToStatusConverter;
 import twittertopicstrand.sources.StatusSource;
 import twittertopicstrand.util.FileOperations;
 
@@ -20,20 +24,17 @@ import twittertopicstrand.util.FileOperations;
  *
  */
 public class App {
-    public static void main( String[] args ) throws IOException, JSONException {
-    
-    	System.out.println("hello world");
-
-    	String statusSourceDir = "/home/sait//Desktop/data";
-    	String lightStatusSourceDir = "/home/sait/Desktop/data2";
+		
+    public static void main( String[] args ) throws IOException, JSONException {    	
     	
-    	String[] files = FileOperations.getFiles(lightStatusSourceDir);
+//    	System.out.println("hello world");
+//
+//    	String statusSourceDir = "/home/sait//Desktop/data";
+//    	String lightStatusSourceDir = "/home/sait/Desktop/data2";
+//    	
+//    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
+//    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
-    	for(int i=0;i<files.length;i++){
-    		System.out.println(files[i]);
-    	}
-    	
-    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	//DataAnalyzer.analyze(lightStatusSourceDir);    	
+    	System.out.println("bye .. ");
     }
 }

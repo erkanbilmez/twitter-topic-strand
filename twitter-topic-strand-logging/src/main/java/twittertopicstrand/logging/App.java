@@ -39,10 +39,10 @@ public class App {
 	
     public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException, TwitterException, JSONException  {
 
-    	String selectedUsersPath = "/home/mll2/Desktop/twitter-data/selectedUserIds.txt";
-    	String apiUsersPath = "/home/mll2/Desktop/twitter-data/api-users.xml";
-    	String tempOutputPath = "/home/mll2/Desktop/twitter-data/tempTweets";
-    	String finalOutputPath = "/home/mll2/Desktop/twitter-data/finalTweets";
+    	String selectedUsersPath = "/home/twtuser/logging/selectedUserIds.txt";
+    	String apiUsersPath = "/home/twtuser/logging/api-users.xml";
+    	String tempOutputPath = "/home/twtuser/logging/tmp";
+    	String finalOutputPath = "/home/twtuser/logging/tweets";
     	
     	StreamWorker.startStreaming(selectedUsersPath, apiUsersPath, tempOutputPath, finalOutputPath);  
     	

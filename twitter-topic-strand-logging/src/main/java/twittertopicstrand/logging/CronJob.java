@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -109,9 +110,12 @@ public class CronJob implements Runnable {
 		
 		Collections.sort(statuses);
 		
-		for(int i=0;i<statuses.size();i++){
-			FileOperations.addLine( statuses.get(i).toFriendlyString(), destFilePath);
-		}
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
+        for(int i=0;i<statuses.size();i++){
+			bw.write(statuses.get(i).toFriendlyString());
+        	bw.newLine();
+        }
+        bw.close();
 	}
 	
 	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				

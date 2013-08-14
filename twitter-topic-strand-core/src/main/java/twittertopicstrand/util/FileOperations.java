@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// hello world.
-// hello to K.
+// hello world
 
 public class FileOperations {
 
