@@ -39,8 +39,8 @@ public class App {
 	
     public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException, TwitterException, JSONException  {
 
-    	String selectedUsersPath = "/home/twtuser/logging/selectedUserIds.txt";
-    	String apiUsersPath = "/home/twtuser/logging/api-users.xml";
+    	String selectedUsersPath = "/home/twtuser/logging/src-data/selectedUserIds.txt";
+    	String apiUsersPath = "/home/twtuser/logging/src-data/api-users.xml";
     	String tempOutputPath = "/home/twtuser/logging/tmp";
     	String finalOutputPath = "/home/twtuser/logging/tweets";
     	
