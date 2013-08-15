@@ -50,6 +50,11 @@ public class DataAnalyzer{
 		
 		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		
+		System.out.println("selected hashtags:");
+		for(int i=0;i<hashTags.length;i++){
+			System.out.println(hashTags[i]);
+		}
+		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 						
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
@@ -58,6 +63,7 @@ public class DataAnalyzer{
 			List<LightStatus> lstStatus = entry.getValue();
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
+
 //			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 //			
 //			for(int i=0;i<topics.size();i++) {

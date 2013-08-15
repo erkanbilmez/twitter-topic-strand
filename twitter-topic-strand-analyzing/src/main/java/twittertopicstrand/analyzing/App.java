@@ -26,22 +26,23 @@ import twittertopicstrand.util.FileOperations;
  */
 public class App {
 		
-    public static void main( String[] args ) throws IOException, JSONException {    	
-    	
-    	System.out.println("hello");
-    	
+	public static void convert() throws IOException{
+		
     	String src = "/home/twtuser/reduced-tweets-subset";
     	String dest = "/home/twtuser/lightstatus-subset";
     	
     	BilkentReducedToLightStatusConverter.convert(src,dest,true);
+	}
+	
+    public static void main( String[] args ) throws IOException, JSONException {    	
     	
-//    	System.out.println("hello world");
-//
-//    	String statusSourceDir = "/home/sait//Desktop/data";
-//    	String lightStatusSourceDir = "/home/sait/Desktop/data2";
-//    	
-//    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-//    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	System.out.println("hello ..");
+
+    	//String statusSourceDir = "/home/sait//Desktop/data";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
+    	
+    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
