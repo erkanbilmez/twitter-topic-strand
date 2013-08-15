@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,6 +26,7 @@ import twitter4j.Status;
 import twitter4j.StatusFactory;
 import twitter4j.internal.json.StatusJSONImpl;
 import twittertopicstrand.util.FileOperations;
+import twittertopicstrand.util.MailSender;
 
 public class CronJob implements Runnable {
 	
@@ -95,7 +97,9 @@ public class CronJob implements Runnable {
         }
 	}
 	
-	public static void sortFile(String sourceFilePath, String destFilePath) throws IOException {
+	public static int sortFile(String sourceFilePath, String destFilePath) throws IOException {
+		int rVal = 0;
+		
 		List<Status> statuses = new ArrayList<Status>();		
 		Status temp;
 		
@@ -109,6 +113,7 @@ public class CronJob implements Runnable {
         br.close();
 		
 		Collections.sort(statuses);
+		rVal = statuses.size();
 		
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
         for(int i=0;i<statuses.size();i++){
@@ -116,6 +121,8 @@ public class CronJob implements Runnable {
         	bw.newLine();
         }
         bw.close();
+        
+        return rVal;
 	}
 	
 	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
@@ -145,7 +152,17 @@ public class CronJob implements Runnable {
 			f.delete();
 		}
 		
-		sortFile(unSortedDestFile, destFile);
+		int numTweets = sortFile(unSortedDestFile, destFile);
+		
+		try{
+			String to = "sehir.tweet.logging@gmail.com";
+			String subject = "hourly report";
+			String body = String.valueOf(numTweets) + " tweets in " + dt.toString("yy-MM-dd-HH");
+			
+			MailSender.send(to, subject, body);
+		}catch(Exception ex){
+			System.out.println("problem with sending e-mail..");
+		}
 		
 		File f1 = new File(unSortedDestFile);
 		f1.delete();
@@ -159,14 +176,15 @@ public class CronJob implements Runnable {
 	public void tick() {
 		String[] files = FileOperations.getFiles(this.sourceFolderPath);
 		
-		DateTime now = new DateTime().withMinuteOfHour(0).withSecondOfMinute(0).minusHours(1); // for safety
-				
 		for(int i=0;i<files.length;i++) {
 			String currentFile = files[i];			
 
 			DateTime fileDate = getFileDate(currentFile);
+			DateTime now = new DateTime();
 			
-			if(fileDate.isBefore(now)) {
+			Duration diff = new Duration(fileDate, now);
+			
+			if(diff.getStandardHours() > 1) {
 				try {
 					processThisDate(this.sourceFolderPath, this.destFolderPath, fileDate);
 				} catch (IOException e) { System.out.println(e.getMessage()); }

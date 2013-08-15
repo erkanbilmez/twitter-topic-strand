@@ -3,6 +3,7 @@ package twittertopicstrand.logging;
 import java.io.File;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
@@ -86,10 +87,18 @@ public class StreamWorkerClient implements Runnable {
 			}
 			
 			@Override
-			public void onStatus(Status arg0) {				
-				String fileName = getFileName(arg0);
-				StatusJSONImpl s = (StatusJSONImpl)arg0;
-				FileOperations.addLine(s.toFriendlyString(), fileName);
+			public void onStatus(Status arg0) {		
+				
+				DateTime dt = new DateTime( arg0.getCreatedAt() );
+				DateTime now = new DateTime();
+				
+				Duration diff = new Duration(dt, now);
+				
+				if( diff.getStandardMinutes() < 55 ){
+					String fileName = getFileName(arg0);
+					StatusJSONImpl s = (StatusJSONImpl)arg0;
+					FileOperations.addLine(s.toFriendlyString(), fileName);
+				}
 			}
 			
 			@Override
