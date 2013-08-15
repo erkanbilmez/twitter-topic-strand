@@ -9,7 +9,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import twitter4j.LightStatus;
+import twitter4j.Status;
+import twitter4j.StatusFactory;
 
 // hello world
 
@@ -177,5 +182,61 @@ public class FileOperations {
         }
         finally { fileHandler.close(); }
     }
+    
+	public static int sortFileStatus(String sourceFilePath, String destFilePath) throws IOException {
+		int rVal = 0;
+		
+		List<Status> statuses = new ArrayList<Status>();		
+		Status temp;
+		
+		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+        String line;
+        
+        while ((line = br.readLine()) != null) {
+        	temp = StatusFactory.fromString(line);
+        	statuses.add(temp);
+        }
+        br.close();
+		
+		Collections.sort(statuses);
+		rVal = statuses.size();
+		
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
+        for(int i=0;i<statuses.size();i++){
+			bw.write(statuses.get(i).toFriendlyString());
+        	bw.newLine();
+        }
+        bw.close();
+        
+        return rVal;
+	}
+	
+	public static int sortFileLightStatus(String sourceFilePath, String destFilePath) throws IOException {
+		int rVal = 0;
+		
+		List<LightStatus> statuses = new ArrayList<LightStatus>();		
+		LightStatus temp;
+		
+		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+        String line;
+        
+        while ((line = br.readLine()) != null) {
+        	temp = LightStatus.fromJSONString(line);
+        	statuses.add(temp);
+        }
+        br.close();
+		
+		Collections.sort(statuses);
+		rVal = statuses.size();
+		
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
+        for(int i=0;i<statuses.size();i++){
+			bw.write(statuses.get(i).toJSONString());
+        	bw.newLine();
+        }
+        bw.close();
+        
+        return rVal;
+	}
 
 }

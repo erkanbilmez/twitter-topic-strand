@@ -14,6 +14,7 @@ import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
+import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.converter.BilkentToLightStatusConverter;
 import twittertopicstrand.converter.BilkentToStatusConverter;
 import twittertopicstrand.sources.StatusSource;
@@ -26,6 +27,13 @@ import twittertopicstrand.util.FileOperations;
 public class App {
 		
     public static void main( String[] args ) throws IOException, JSONException {    	
+    	
+    	System.out.println("hello");
+    	
+    	String src = "/home/twtuser/reduced-tweets-subset";
+    	String dest = "/home/twtuser/lightstatus-subset";
+    	
+    	BilkentReducedToLightStatusConverter.convert(src,dest,true);
     	
 //    	System.out.println("hello world");
 //

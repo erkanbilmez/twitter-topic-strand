@@ -97,34 +97,6 @@ public class CronJob implements Runnable {
         }
 	}
 	
-	public static int sortFile(String sourceFilePath, String destFilePath) throws IOException {
-		int rVal = 0;
-		
-		List<Status> statuses = new ArrayList<Status>();		
-		Status temp;
-		
-		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
-        String line;
-        
-        while ((line = br.readLine()) != null) {
-        	temp = StatusFactory.fromString(line);
-        	statuses.add(temp);
-        }
-        br.close();
-		
-		Collections.sort(statuses);
-		rVal = statuses.size();
-		
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
-        for(int i=0;i<statuses.size();i++){
-			bw.write(statuses.get(i).toFriendlyString());
-        	bw.newLine();
-        }
-        bw.close();
-        
-        return rVal;
-	}
-	
 	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
 		String[] files = FileOperations.getFiles(sourceFolderPath);
 		
@@ -152,7 +124,7 @@ public class CronJob implements Runnable {
 			f.delete();
 		}
 		
-		int numTweets = sortFile(unSortedDestFile, destFile);
+		int numTweets = FileOperations.sortFileStatus(unSortedDestFile, destFile);
 		
 		try{
 			String to = "sehir.tweet.logging@gmail.com";
