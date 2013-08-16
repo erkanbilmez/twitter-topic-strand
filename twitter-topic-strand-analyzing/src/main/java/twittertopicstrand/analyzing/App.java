@@ -43,7 +43,7 @@ public class App {
 		int length = HourOperations.getHourId(new DateTime(subset[0].createdAt), 
 												new DateTime(subset[subset.length-1].createdAt)) + 1;
 				
-		DateTime start = new DateTime(statuses[0].createdAt);
+		DateTime start = new DateTime(subset[0].createdAt);
 		int[] activity = new int[length];
 		
 		for(int i=0;i<subset.length;i++){
