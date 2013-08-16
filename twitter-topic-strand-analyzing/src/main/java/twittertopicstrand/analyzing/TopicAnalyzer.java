@@ -46,7 +46,11 @@ public class TopicAnalyzer {
 	}
 	
 	private void init(){
-		int length = HourOperations.getHourId(this.firstTime, this.lastTime) + 1;
+		
+		DateTime start = this.firstTime.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime end = this.lastTime.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		
+		int length = HourOperations.getHourId(start, end) + 1;
 		participants = new ArrayList< HashMap<Long, Integer> > (length);
 		
 		for(int i=0;i<length;i++) {
@@ -55,7 +59,7 @@ public class TopicAnalyzer {
 			
 		for(int i=0;i<statuses.length;i++) {
 			long userId = statuses[i].userId;
-			int hourId = HourOperations.getHourId(this.firstTime, new DateTime ( statuses[i].createdAt ));
+			int hourId = HourOperations.getHourId(start, new DateTime ( statuses[i].createdAt ));
 			
 			int count = participants.get(hourId).containsKey(userId) ? participants.get(hourId).get(userId) : 0;
 			participants.get(hourId).put(userId, count + 1);

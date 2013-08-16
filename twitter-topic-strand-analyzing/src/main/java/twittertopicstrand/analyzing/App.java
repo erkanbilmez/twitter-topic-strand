@@ -39,11 +39,17 @@ public class App {
 				temp.add(statuses[i]);
 			}
 		}
+		
 		LightStatus[] subset = temp.toArray(new LightStatus[temp.size()]);
-		int length = HourOperations.getHourId(new DateTime(subset[0].createdAt), 
-												new DateTime(subset[subset.length-1].createdAt)) + 1;
+		DateTime start = new DateTime(subset[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime end = new DateTime(subset[subset.length-1].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+	
+		int length = HourOperations.getHourId(start, end) + 1;
+		
+		System.out.println("start:" + start);
+		System.out.println("end:" + end);
+		System.out.println("length" + length);
 				
-		DateTime start = new DateTime(subset[0].createdAt);
 		int[] activity = new int[length];
 		
 		for(int i=0;i<subset.length;i++){
