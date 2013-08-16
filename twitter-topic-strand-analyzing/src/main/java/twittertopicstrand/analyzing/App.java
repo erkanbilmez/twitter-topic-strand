@@ -35,7 +35,7 @@ public class App {
 		
 		List<LightStatus> temp = new ArrayList<LightStatus>();
 		for(int i=0;i<statuses.length;i++){
-			if( Arrays.asList( statuses[i].hashTags ).contains("direngeziparkı")){
+			if( Arrays.asList( statuses[i].hashTags ).contains("redhack")){
 				temp.add(statuses[i]);
 			}
 		}
@@ -72,7 +72,7 @@ public class App {
     	
     	System.out.println("hello ..");
     	
-    	//analyze();
+    	analyze();
  
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
@@ -81,7 +81,7 @@ public class App {
     	//String lightStatusSourceDir = "/home/sait/Desktop/lightstatus-subset";
     	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	//DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
