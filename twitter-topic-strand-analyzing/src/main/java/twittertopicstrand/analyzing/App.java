@@ -72,16 +72,16 @@ public class App {
     	
     	System.out.println("hello ..");
     	
-    	analyze();
+    	//analyze();
  
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
-    	//String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-all";
     	
     	//String lightStatusSourceDir = "/home/sait/Desktop/lightstatus-subset";
     	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	//DataAnalyzer.analyze(lightStatusSourceDir);
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }

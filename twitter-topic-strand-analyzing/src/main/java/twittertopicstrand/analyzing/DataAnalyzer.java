@@ -53,6 +53,8 @@ public class DataAnalyzer{
 			System.out.println(hashTags[i]);
 		}
 		
+		System.exit(-1);
+		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 		
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
