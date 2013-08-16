@@ -2,12 +2,16 @@ package twittertopicstrand.analyzing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -25,6 +29,7 @@ public class TopicAnalyzer {
 	DateTime firstTime;
 	DateTime lastTime;
 	
+	ArrayList <HashMap<Long, Integer> > participants;
 	HashSet<Long> allParticipants = new HashSet<Long>();
 		      
 	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
@@ -42,8 +47,7 @@ public class TopicAnalyzer {
 	
 	private void init(){
 		int length = HourOperations.getHourId(this.firstTime, this.lastTime) + 1;
-		
-		ArrayList < HashMap<Long, Integer> > participants = new ArrayList< HashMap<Long, Integer> > (length);
+		participants = new ArrayList< HashMap<Long, Integer> > (length);
 		
 		for(int i=0;i<length;i++) {
 			participants.add( new HashMap<Long, Integer>() );
@@ -65,54 +69,81 @@ public class TopicAnalyzer {
 		this.heroAnalyzer.analyze(participants, allParticipants, this.statuses);
 	}
 	
+	private int[] getTweetVolumes(){
+		int[] rVal = new int[this.participants.size()];
+		
+		for(int i=0;i<participants.size();i++){
+			int total = 0;
+			HashMap<Long, Integer> hour = participants.get(i);
+			for(Map.Entry<Long, Integer> entry: hour.entrySet()){
+				total += entry.getValue();
+			}
+			rVal[i] = total;
+		}
+		
+		return rVal;
+	}
+	
+	private int[] getParticipantVolumes() {
+		int[] rVal = new int[this.participants.size()];
+		
+		for(int i=0;i<participants.size();i++){
+			rVal[i] = participants.get(i).size(); 
+		}
+		
+		return rVal;
+	}
+	
+	private int[] getSummary(int[] arr){
+		int[] rVal;
+		
+		int numItems = 10;
+		int itemsPerChunk = arr.length / 10;
+		
+		rVal = new int[numItems];
+				
+		for(int i=0;i<rVal.length;i++) {
+			int total = 0;
+			for(int j=itemsPerChunk * i;j<itemsPerChunk * (i+1);j++){
+				total += arr[j]; 
+			}
+			rVal[i] = total;
+		}
+		
+		return rVal;
+	}
+	
 	public JSONObject toJSONObject() throws JSONException {		
 		
 		JSONObject rVal = new JSONObject();
 		
 		rVal.put("Hashtag", this.topicIdentifier);
 		rVal.put("TweetCount", this.statuses.length);
-	
-		rVal.put("ParticipantCount", this.allParticipants.size());
+		rVal.put("ParticipantCount", this.allParticipants.size() );
+		rVal.put("VeteranCount", this.veteranAnalyzer.veteranCount );
+		rVal.put("HeroCount", this.heroAnalyzer.heroCount );
+		rVal.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
+		rVal.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		
-		rVal.put("VeteranCount", this.veteranAnalyzer.veteranCount);
-		//rVal.put("HeroCount", this.heroAnalyzer.heroCount);
+		int[] tweetVolume = getTweetVolumes();
+		int[] tweetVolumeSummary = getSummary(tweetVolume);
 		
-		rVal.put("FirstHour", this.firstTime);
-		rVal.put("LastHour", this.lastTime);
+		int[] participantVolume = getParticipantVolumes();
+		int[] participantSummary = getSummary(participantVolume);
+		
+		int[] veteranSummary = getSummary(veteranAnalyzer.veteranCountsByHour);
+		int[] heroSummary = getSummary(heroAnalyzer.heroCountsByHour);
+		
+		rVal.put("TweetVolume", tweetVolume);
+		rVal.put("ParticipantVolume", participantVolume);
+		rVal.put("VeteranVolume", veteranAnalyzer.veteranCountsByHour);
+		rVal.put("HeroVolume", heroAnalyzer.heroCountsByHour);
+		
+		rVal.put("TweetSummary", tweetVolumeSummary);
+		rVal.put("ParticipantSummary", participantSummary);
+		rVal.put("VeteranSummary", veteranSummary);
+		rVal.put("HeroSummary", heroSummary);
 		
 		return rVal;
-		
-		// Example code
-		
-//		JSONObject obj = new JSONObject();
-//    	obj.put("publisher", "hebe");
-//    	
-//    	JSONObject inner = new JSONObject();
-//    	inner.put("publisher", "sait");
-//    	
-//    	obj.put("a", inner);
-//    	
-//    	JSONArray arr = new JSONArray();
-//    	arr.put("a");
-//    	arr.put("b");
-//    	arr.put("c");
-//    	
-//    	obj.put("array", arr);
-				
-//		Output format:
-		
-//		{
-//			"HashTag":"direndersim", "TweetCount":14012, "ParticipantCount":9602, "VeteranCount":0, "HeroCount":3, "MissionaryCount":0, "FirstDate":"Sun Jun 02 23:03:00 VET 2013", "LastDate":"Tue Jun 25 13:07:19 VET 2013", "FirstHour":"2013.6.3.23", "LastHour":"2013.6.26.13", "SequenceCount":543,
-//
-//			"TweetVolume" : [0,0,1,2,3,0,2,1],
-//			"ParticipantVolume" : [3,2,1,2,2,0,2,1],
-//			"HeroVolume" : [3,2,1,2,2,0,2,1], 	
-//			"VeteranVolume" : [3,2,1,2,2,0,2,1], 	
-//			
-//			"TweetSummary" : [0,0,1,2,3,0,2,1],
-//			"ParticipantSummary" : [3,2,1,2,2,0,2,1],
-//			"HeroSummary" : [3,2,1,2,2,0,2,1], 	
-//			"VeteranSummary" : [3,2,1,2,2,0,2,1]
-//		}
 	}
 }

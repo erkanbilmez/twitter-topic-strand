@@ -1,21 +1,19 @@
 package twittertopicstrand.analyzing;
 
-import java.util.List;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.util.FileOperations;
-import twittertopicstrand.util.MapOperations;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class DataAnalyzer{
 	
@@ -23,7 +21,7 @@ public class DataAnalyzer{
 		
   	private static Map<String, List<LightStatus>> splitByHashTag(String[] selectedHashTags, LightStatus[] statuses){
   		
-  		Map<String, List<LightStatus>> rVal = new HashMap<String, List<LightStatus>>();
+  		Map<String, List<LightStatus>> rVal = new LinkedHashMap<String, List<LightStatus>>();
   		
   		for(int i=0;i<selectedHashTags.length;i++) {
   			rVal.put(selectedHashTags[i].toLowerCase(), new ArrayList<LightStatus>());
@@ -56,7 +54,7 @@ public class DataAnalyzer{
 		}
 		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
-						
+		
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
 			
 			String hashTag = entry.getKey();
@@ -74,12 +72,10 @@ public class DataAnalyzer{
 //			}
 			
 			TopicAnalyzer analyzer = new TopicAnalyzer(hashTag, statuses);
-			finalJSON.put(hashTag, analyzer.toJSONObject());
-			
+			finalJSON.put( hashTag, analyzer.toJSONObject() );
 		}		
 		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String finalOutput = gson.toJson( finalJSON );
+		String finalOutput = finalJSON.toString();
 		
 		FileOperations.writeFile(finalOutput, "output.txt");
 	}

@@ -35,14 +35,16 @@ public class VeteranAnalyzer {
 		for(int i=0;i<participants.size();i++){
 			
 			int chunkId = i / numOfItemsPerChunk;
+		
+			if(chunkId < numOfChunks){
+				for(Map.Entry<Long, Integer> entry: participants.get(i).entrySet() ){
+					long userId = entry.getKey();
 			
-			for(Map.Entry<Long, Integer> entry: participants.get(i).entrySet() ){
-				long userId = entry.getKey();
-				
-				if(!temp.get(chunkId).contains(userId)){
-					temp.get(chunkId).add(userId);
-				}
-			}			
+					if(!temp.get(chunkId).contains(userId)){
+						temp.get(chunkId).add(userId);
+					}
+				}			
+			}
 		}
 		
 		for(int i=0;i<temp.size();i++){
