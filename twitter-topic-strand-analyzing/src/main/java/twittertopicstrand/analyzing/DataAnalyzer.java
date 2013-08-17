@@ -50,7 +50,7 @@ public class DataAnalyzer{
 		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		
 		System.out.println("selected hashtags:");
-		Arrays.toString(hashTags);
+		System.out.println(Arrays.toString(hashTags));
 		
 		System.exit(-1);
 		

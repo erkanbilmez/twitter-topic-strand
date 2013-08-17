@@ -29,16 +29,19 @@ import twittertopicstrand.util.HourOperations;
 public class App {
 
 	public static void analyzeAll(String[] arr) throws IOException{
-		for(int i=0;i<arr.length;i++){
-			analyze(arr[i]);
-		}
-	}
-	
-	public static void analyze(String hashTag) throws IOException{
 		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-all";
 		LightStatusSource src = new LightStatusSource(lightStatusSourceDir);
 		
 		LightStatus[] statuses = src.getAll();
+		
+		for(int i=0;i<arr.length;i++){
+			analyze(statuses, arr[i]);
+		}
+		
+		Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","ls /home/XXX"});
+	}
+	
+	public static void analyze(LightStatus[] statuses, String hashTag) throws IOException{
 		
 		List<LightStatus> temp = new ArrayList<LightStatus>();
 		for(int i=0;i<statuses.length;i++){
@@ -53,10 +56,12 @@ public class App {
 	
 		int length = HourOperations.getHourId(start, end) + 1;
 		
+		System.out.println("hashtag:" + hashTag);
 		System.out.println("start:" + start);
 		System.out.println("end:" + end);
-		System.out.println("length" + length);
-				
+		System.out.println("length" + length);		
+		System.out.println("------");
+		
 		int[] activity = new int[length];
 		
 		for(int i=0;i<subset.length;i++){
