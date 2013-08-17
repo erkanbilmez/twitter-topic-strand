@@ -19,6 +19,7 @@ import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.sources.LightStatusSource;
+import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.HourOperations;
 
 /**
@@ -27,7 +28,13 @@ import twittertopicstrand.util.HourOperations;
  */
 public class App {
 
-	public static void analyze() throws IOException{
+	public static void analyzeAll(String[] arr) throws IOException{
+		for(int i=0;i<arr.length;i++){
+			analyze(arr[i]);
+		}
+	}
+	
+	public static void analyze(String hashTag) throws IOException{
 		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-all";
 		LightStatusSource src = new LightStatusSource(lightStatusSourceDir);
 		
@@ -35,7 +42,7 @@ public class App {
 		
 		List<LightStatus> temp = new ArrayList<LightStatus>();
 		for(int i=0;i<statuses.length;i++){
-			if( Arrays.asList( statuses[i].hashTags ).contains("redhack")){
+			if( Arrays.asList( statuses[i].hashTags ).contains(hashTag)){
 				temp.add(statuses[i]);
 			}
 		}
@@ -57,7 +64,19 @@ public class App {
 			activity[hourId]++;
 		}
 		
-		System.out.println(Arrays.toString(activity));
+		String line = "createPdf(" + hashTag + "," + gettRArr(activity) + "," + start.getHourOfDay() + ")";
+		FileOperations.addLine(line, "/home/twtuser/createPdf.r");
+	}
+	
+	private static String gettRArr(int[] arr){
+		String rVal = "c(";
+
+		for(int i=0;i<arr.length-1;i++){
+			rVal += String.valueOf(arr[i]) + ",";
+		}
+		rVal += String.valueOf(arr[arr.length-1]) + ")";
+
+		return rVal;
 	}
 		
 	public static void convert() throws IOException{
@@ -72,18 +91,17 @@ public class App {
     	
     	System.out.println("hello ..");
     	
-    	convert();
-    	
-    	//analyze();
+    	//String[] arr = new String[] {"ali"};
+    	//analyzeAll(arr);
  
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-all";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
     	
     	//String lightStatusSourceDir = "/home/sait/Desktop/lightstatus-subset";
     	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	//DataAnalyzer.analyze(lightStatusSourceDir);
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }

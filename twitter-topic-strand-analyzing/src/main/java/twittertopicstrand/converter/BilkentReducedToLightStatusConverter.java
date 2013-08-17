@@ -21,23 +21,16 @@ public class BilkentReducedToLightStatusConverter {
 	        
 		for(int i=0;i<lines.size();i++) {
 			String line = lines.get(i);
-			String[] parts = line.split("\\|");
 			
-			LightStatus ls = new LightStatus();
-			
-			String dtString = sourceFile.substring(sourceFile.length() - 12, sourceFile.length() - 4) + 
-					"-" + parts[0];
-			
-			ls.createdAt = HourOperations.getDateTime(dtString).toDate();
-			ls.id = Long.valueOf(parts[1]);
-			ls.userId = Long.valueOf(parts[2]);
-			ls.retweetedStatusId = parts[3].isEmpty() ? -1l : Long.valueOf(parts[3]);
-			ls.retweetedStatusUserId = parts[4].isEmpty() ? -1l : Long.valueOf(parts[4]);
-			ls.hashTags = parts[7].isEmpty() ? new String[] {} : parts[7].split(",");
-			
-			if(ls.hashTags.length > 0){
-				bw.write(ls.toJSONString());
-        		bw.newLine();
+			try{
+				LightStatus ls = processLine(line, sourceFile);
+				if(ls.hashTags.length > 0){
+					bw.write(ls.toJSONString());
+	        		bw.newLine();
+				}
+			}
+			catch(Exception ex){
+				System.out.println("one line couldn't convert.");
 			}
 		}
 		
@@ -45,11 +38,31 @@ public class BilkentReducedToLightStatusConverter {
 		
 	}
 	
+	private static LightStatus processLine(String line, String sourceFile){
+		String[] parts = line.split("\\|");
+		
+		LightStatus ls = new LightStatus();
+		
+		String dtString = sourceFile.substring(sourceFile.length() - 12, sourceFile.length() - 4) + 
+				"-" + parts[0];
+		
+		ls.createdAt = HourOperations.getDateTime(dtString).toDate();
+		ls.id = Long.valueOf(parts[1]);
+		ls.userId = Long.valueOf(parts[2]);
+		ls.retweetedStatusId = parts[3].isEmpty() ? -1l : Long.valueOf(parts[3]);
+		ls.retweetedStatusUserId = parts[4].isEmpty() ? -1l : Long.valueOf(parts[4]);
+		ls.hashTags = parts[7].isEmpty() ? new String[] {} : parts[7].split(",");
+		
+		return ls;
+	}
+	
 	public static void convert(String sourceDir, String destDir, boolean onlyHashTaggeds) throws IOException{
 		String[] files = FileOperations.getFiles(sourceDir);
 		
 		for(int i=0;i<files.length;i++){
 			String sourceFile = files[i];
+			
+			System.out.println(sourceFile);
 			String destFile = destDir + File.separator + FileOperations.getOnlyFileName(sourceFile);
 			
 			String tempFile = destDir + File.separator + UUID.randomUUID();

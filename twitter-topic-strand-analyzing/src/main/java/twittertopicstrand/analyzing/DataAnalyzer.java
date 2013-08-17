@@ -2,6 +2,7 @@ package twittertopicstrand.analyzing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +50,7 @@ public class DataAnalyzer{
 		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		
 		System.out.println("selected hashtags:");
-		for(int i=0;i<hashTags.length;i++){
-			System.out.println(hashTags[i]);
-		}
+		Arrays.toString(hashTags);
 		
 		System.exit(-1);
 		
