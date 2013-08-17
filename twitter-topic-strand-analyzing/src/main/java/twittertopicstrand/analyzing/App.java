@@ -62,8 +62,8 @@ public class App {
 		
 	public static void convert() throws IOException{
 		
-    	String src = "/home/sait/Desktop/reducedSubset";
-    	String dest = "/home/sait/Desktop/lightstatus-subset";
+    	String src = "/home/twtuser/reduced-tweets-subset";
+    	String dest = "/home/twtuser/lightstatus-subset";
     	
     	BilkentReducedToLightStatusConverter.convert(src,dest,true);
 	}
@@ -72,7 +72,9 @@ public class App {
     	
     	System.out.println("hello ..");
     	
-    	analyze();
+    	convert();
+    	
+    	//analyze();
  
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
