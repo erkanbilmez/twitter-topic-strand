@@ -29,7 +29,7 @@ import twittertopicstrand.util.HourOperations;
 public class App {
 
 	public static void analyzeAll(String[] arr) throws IOException{
-		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-all";
+		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
 		LightStatusSource src = new LightStatusSource(lightStatusSourceDir);
 		
 		LightStatus[] statuses = src.getAll();
