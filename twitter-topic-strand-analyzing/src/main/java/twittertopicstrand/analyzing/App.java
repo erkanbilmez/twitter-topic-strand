@@ -37,8 +37,6 @@ public class App {
 		for(int i=0;i<arr.length;i++){
 			analyze(statuses, arr[i]);
 		}
-		
-		Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","ls /home/XXX"});
 	}
 	
 	public static void analyze(LightStatus[] statuses, String hashTag) throws IOException{
@@ -69,7 +67,7 @@ public class App {
 			activity[hourId]++;
 		}
 		
-		String line = "createPdf(" + hashTag + "," + gettRArr(activity) + "," + start.getHourOfDay() + ")";
+		String line = "createPdf('" + hashTag + "'," + gettRArr(activity) + "," + start.getHourOfDay() + ")";
 		FileOperations.addLine(line, "/home/twtuser/createPdf.r");
 	}
 	
@@ -95,18 +93,25 @@ public class App {
     public static void main( String[] args ) throws IOException, JSONException {    	
     	
     	System.out.println("hello ..");
+   
+    	String[] arr = new String[] { "direngeziparkı", "direngeziparki", 
+    			"occupygezi", "direnankara", "redhack", "direngezi", 
+    			"direngaziparki", "direngeziseninleyiz", "direnizmir", 
+    			"sesvertürkiyebuülkesahipsizdeğil", "direnbesiktas", 
+    			"bubirsivildirenis", "occupyturkey", "tayyipistifa", 
+    			"cevapver", "yenibirdünya", "eylemvakti","atatürki̇yi̇ki̇varsin", 
+    			"tayyi̇pi̇yi̇ki̇varsin", "direnturkiye", "1milyonyarintaksime", 
+    			"weareerdoğan", "turkey", "tayipi̇stifa", "occupylondon", 
+    			"geziparki", "direnadana", "ff", "türkiyemdireniyor", "rt" };
     	
-    	//String[] arr = new String[] {"ali"};
-    	//analyzeAll(arr);
- 
+    	analyzeAll(arr);
+    	
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
     	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
     	
-    	//String lightStatusSourceDir = "/home/sait/Desktop/lightstatus-subset";
-    	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	//DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
