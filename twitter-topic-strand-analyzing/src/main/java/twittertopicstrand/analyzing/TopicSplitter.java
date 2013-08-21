@@ -22,8 +22,8 @@ public class TopicSplitter {
 	private static int[] createArray(LightStatus[] statuses){
 		int[] rVal;
 		
-		DateTime start = new DateTime(statuses[0]).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		DateTime end = new DateTime(statuses[statuses.length-1]).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime start = new DateTime(statuses[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime end = new DateTime(statuses[statuses.length-1].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
 		
 		int length = HourOperations.getHourId(start, end) + 1;
 		
