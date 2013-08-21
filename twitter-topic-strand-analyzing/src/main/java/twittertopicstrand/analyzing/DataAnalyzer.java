@@ -67,7 +67,7 @@ public class DataAnalyzer{
 
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 		
-			DateTime start = new DateTime(statuses[0]).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+			DateTime start = new DateTime(statuses[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
 			
 			System.out.println(hashTag);
 			System.out.println(topics.size() + "parts");

@@ -42,7 +42,8 @@ public class App {
    
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-minisubset";
+    	//String lightStatusSourceDir = "/home/twtuser/lightstatus-minisubset";
     	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
     	DataAnalyzer.analyze(lightStatusSourceDir);
