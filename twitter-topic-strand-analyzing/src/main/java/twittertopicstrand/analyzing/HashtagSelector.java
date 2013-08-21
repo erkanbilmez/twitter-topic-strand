@@ -11,7 +11,7 @@ import twittertopicstrand.util.MapOperations;
 
 public class HashtagSelector {
 	
-	private static int mostNHashtags = 2;
+	private static int mostNHashtags = 15;
 	
 	private static Map<String, Integer> createHashMap(LightStatus[] statuses) throws IOException {
 		
