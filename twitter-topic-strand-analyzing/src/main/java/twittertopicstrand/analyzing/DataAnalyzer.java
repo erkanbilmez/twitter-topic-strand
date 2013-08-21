@@ -7,18 +7,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+
 import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.util.FileOperations;
+import twittertopicstrand.util.HourOperations;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class DataAnalyzer{
 	
-  	static JSONObject finalJSON = new JSONObject();
+  	static JSONObject finalJson = new JSONObject();
+  	static JSONObject indexJson = new JSONObject();
 		
   	private static Map<String, List<LightStatus>> splitByHashTag(String[] selectedHashTags, LightStatus[] statuses){
   		
@@ -52,8 +56,6 @@ public class DataAnalyzer{
 		System.out.println("selected hashtags:");
 		System.out.println(Arrays.toString(hashTags));
 		
-		System.exit(-1);
-		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 		
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
@@ -63,21 +65,35 @@ public class DataAnalyzer{
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
-//			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
-//			
+			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+		
+			DateTime start = new DateTime(statuses[0]).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+			
+			System.out.println(hashTag);
+			System.out.println(topics.size() + "parts");
+			for(int i=0;i<topics.size();i++){
+				LightStatus[] topic = topics.get(i);
+				
+				int f1 = HourOperations.getHourId(start, new DateTime(topic[0].createdAt));
+				int f2 = HourOperations.getHourId(start, new DateTime(topic[topic.length-1].createdAt));
+				
+				System.out.println(f1);
+				System.out.println(f2);
+			}
+			
 //			for(int i=0;i<topics.size();i++) {
 //				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topics.get(i));
 //				
-//				finalJSON.put(topicIdentifier, analyzer.toJSONObject());					
+//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, statuses);
+//				finalJson.put( hashTag, analyzer.getMainJson() );
+//				indexJson.put( hashTag, analyzer.getIndexJSon() );
 //			}
-			
-			TopicAnalyzer analyzer = new TopicAnalyzer(hashTag, statuses);
-			finalJSON.put( hashTag, analyzer.toJSONObject() );
 		}		
 		
-		String finalOutput = finalJSON.toString();
+		String mainOutput = finalJson.toString();
+		String indexOutput = indexJson.toString();
 		
-		FileOperations.writeFile(finalOutput, "output.txt");
+		FileOperations.writeFile(mainOutput, "/home/twtuser/mainOutput.txt");
+		FileOperations.writeFile(indexOutput, "/home/twtuser/indexOutput.txt");
 	}
 }

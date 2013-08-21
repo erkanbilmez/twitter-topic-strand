@@ -42,8 +42,8 @@ import com.google.gson.GsonBuilder;
  */
 public class App {
 	
-    public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException {
-     	
+    public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException, TwitterException {
+    	
     	String selectedUsersPath = "/home/twtuser/logging/src-data/selectedUserIds.txt";
     	String apiUsersPath = "/home/twtuser/logging/src-data/api-users.xml";
     	String tempOutputPath = "/home/twtuser/logging/tmp";
