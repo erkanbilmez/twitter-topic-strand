@@ -82,7 +82,7 @@ public class TopicSplitter {
 		int start=0;
 		int end=0;
 		
-		for(int i=0;i<filtered.length;i++){
+		for(int i=0;i<filtered.length;i++) {
 			double current = filtered[i];
 			if(state==0){
 				if(current>highThreshold){
@@ -116,6 +116,12 @@ public class TopicSplitter {
 					start = 0; end = 0; state = 0;
 				}
 			}
+		}
+		
+		if(state ==2) {
+			end = filtered.length - 1;
+			LightStatus[] subset = getSubset(statuses, start, end);
+			rVal.add(subset);
 		}
 		
 		return rVal;
