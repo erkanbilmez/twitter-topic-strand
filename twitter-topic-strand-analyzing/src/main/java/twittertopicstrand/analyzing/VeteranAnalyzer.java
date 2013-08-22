@@ -27,6 +27,10 @@ public class VeteranAnalyzer {
 			
 		HashSet<Long> rVal = new HashSet<Long>();
 		
+		if(numOfItemsPerChunk == 0){
+			return rVal;
+		}
+		
 		ArrayList<HashSet<Long>> temp = new ArrayList<HashSet<Long>>(numOfChunks);
 		HashMap<Long, Integer> fTemp = new HashMap<Long, Integer>();
 		
