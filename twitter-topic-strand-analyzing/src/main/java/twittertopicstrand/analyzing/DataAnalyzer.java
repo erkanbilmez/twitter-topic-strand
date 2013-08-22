@@ -70,16 +70,19 @@ public class DataAnalyzer{
 			DateTime start = new DateTime(statuses[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
 			
 			System.out.println(hashTag);
-			System.out.println(topics.size() + "parts");
+			System.out.println("number of topics: " + topics.size());
 			for(int i=0;i<topics.size();i++){
 				LightStatus[] topic = topics.get(i);
+				
+				System.out.println("topic length: " + topic.length);
 				
 				int f1 = HourOperations.getHourId(start, new DateTime(topic[0].createdAt));
 				int f2 = HourOperations.getHourId(start, new DateTime(topic[topic.length-1].createdAt));
 				
-				System.out.println(f1);
-				System.out.println(f2);
+				System.out.println(f1 + ":" + f2);
 			}
+			
+			System.out.println(-----);
 			
 //			for(int i=0;i<topics.size();i++) {
 //				String topicIdentifier = hashTag + "-" + String.valueOf(i);
