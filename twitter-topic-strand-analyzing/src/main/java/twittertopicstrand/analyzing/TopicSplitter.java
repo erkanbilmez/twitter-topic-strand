@@ -38,6 +38,8 @@ public class TopicSplitter {
 			rVal[hourId]++;
 		}
 		
+		System.out.println(Arrays.toString(firstIndexOfHours));
+		
 		return rVal;
 	}
 	
@@ -61,8 +63,13 @@ public class TopicSplitter {
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
 		LightStatus[] rVal;
 		
+		System.out.println("function: getSubset," + start + "," + end);
+		
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
+		
+		System.out.println("from: " + from);
+		System.out.println("to: " + to);
 		
 		rVal = Arrays.copyOfRange(statuses, from, to);
 		
