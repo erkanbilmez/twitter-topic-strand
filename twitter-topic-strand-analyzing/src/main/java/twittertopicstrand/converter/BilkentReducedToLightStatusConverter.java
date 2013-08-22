@@ -13,6 +13,7 @@ import twittertopicstrand.util.HourOperations;
 
 public class BilkentReducedToLightStatusConverter {
 	
+
 	public static void convertFile(String sourceFile, String destFile, boolean onlyHashTaggeds) throws IOException{
 		
 		List<String> lines = FileOperations.readFile(sourceFile);
@@ -33,9 +34,7 @@ public class BilkentReducedToLightStatusConverter {
 				System.out.println("one line couldn't convert.");
 			}
 		}
-		
 	    bw.close();
-		
 	}
 	
 	private static LightStatus processLine(String line, String sourceFile){
@@ -74,4 +73,6 @@ public class BilkentReducedToLightStatusConverter {
 			f.delete();
 		}
 	}
+	
+
 }

@@ -32,6 +32,10 @@ public class LightStatus implements Comparable<LightStatus>{
     	
     	LightStatus rVal = gson.fromJson(json, LightStatus.class);
     	
+    	for(int i=0;i<rVal.hashTags.length;i++){
+    		rVal.hashTags[i] = rVal.hashTags[i].toLowerCase();
+    	}
+    	
     	return rVal;
 	}
 

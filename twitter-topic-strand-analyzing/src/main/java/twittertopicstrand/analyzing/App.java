@@ -18,6 +18,7 @@ import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
+import twittertopicstrand.converter.HashTagRemover;
 import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.sources.StatusSource;
 import twittertopicstrand.util.FileOperations;
@@ -34,11 +35,27 @@ public class App {
     	String src = "/home/twtuser/reduced-tweets-subset";
     	String dest = "/home/twtuser/lightstatus-subset";
     	
-    	BilkentReducedToLightStatusConverter.convert(src,dest,true);
+    	BilkentReducedToLightStatusConverter.convert(src, dest, true);
+	}
+	
+	public static void remove() throws IOException {
+		String src = "/home/twtuser/lightstatus-subset";
+		String dest = "/home/twtuser/lightstatus-subset-removed";
+		
+		String[] arr = new String[] 
+    			{ "direngeziparkı", "direngeziparki", "occupygezi", 
+    			"direnankara", "redhack", "direngezi", "direngaziparki", 
+    			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
+    			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
+    			"tayyipistifa", "cevapver" };
+    	
+    	HashTagRemover.convert(src, dest, arr);
 	}
 	
     public static void main( String[] args ) throws IOException, JSONException {    	
     	System.out.println("hello ..");
+    	
+    	remove();
    
     	//String statusSourceDir = "/home/sait//Desktop/data";
     	
@@ -46,7 +63,7 @@ public class App {
     	//String lightStatusSourceDir = "/home/twtuser/lightstatus-minisubset";
     	
     	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	//DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
