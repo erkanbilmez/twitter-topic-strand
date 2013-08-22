@@ -61,6 +61,9 @@ public class TopicSplitter {
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
 		LightStatus[] rVal;
 			
+		System.out.println("---");
+		System.out.println(start +","+end);
+		
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
@@ -69,8 +72,11 @@ public class TopicSplitter {
 			do{
 				temp--;
 			}while(firstIndexOfHours[temp] != 0);
-			to = temp;
+			to = firstIndexOfHours[temp];
 		}
+		
+		System.out.println(from +","+to);
+		System.out.println("---");
 		
 		rVal = Arrays.copyOfRange(statuses, from, to);
 		

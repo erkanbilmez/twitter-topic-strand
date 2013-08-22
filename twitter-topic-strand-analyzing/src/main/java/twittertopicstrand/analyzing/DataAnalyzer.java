@@ -75,9 +75,11 @@ public class DataAnalyzer{
 				LightStatus[] topic = topics.get(i);
 				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
 				
-				finalJson.put( hashTag, analyzer.getMainJson() );
-				indexJson.put( hashTag, analyzer.getIndexJSon() );
+				finalJson.put( topicIdentifier, analyzer.getMainJson() );
+				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
 			}
+			
+			
 		}		
 		
 		String mainOutput = finalJson.toString();
