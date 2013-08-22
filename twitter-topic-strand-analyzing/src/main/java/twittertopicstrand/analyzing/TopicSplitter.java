@@ -45,7 +45,7 @@ public class TopicSplitter {
 		double[] rVal = new double[arr.length];
 		
 		for(int i=0;i<windowSize;i++){
-			rVal[i] = arr[0] * windowSize;
+			rVal[i] = arr[0];
 		}
 		
 		for(int i=windowSize;i<arr.length;i++){
