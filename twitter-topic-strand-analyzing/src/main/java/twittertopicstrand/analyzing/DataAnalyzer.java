@@ -53,32 +53,32 @@ public class DataAnalyzer{
 		
 		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		
-		System.out.println("selected hashtags:");
-		System.out.println(Arrays.toString(hashTags));
+		System.out.println("selected hashtags: " + Arrays.toString(hashTags));
 		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 		
-		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()){
+		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()) {
 			
 			String hashTag = entry.getKey();
 			List<LightStatus> lstStatus = entry.getValue();
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
-			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
-						
-			for(int i=0;i<topics.size();i++) {
-				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-				
-				System.out.println(topicIdentifier);
-				
-				LightStatus[] topic = topics.get(i);
-				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
-				
-				finalJson.put( topicIdentifier, analyzer.getMainJson() );
-				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
-			}
+			System.out.println("#" + hashTag);
 			
+			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+			
+//			for(int i=0;i<topics.size();i++) {
+//				String topicIdentifier = hashTag + "-" + String.valueOf(i);
+//				
+//				System.out.println(topicIdentifier);
+//				
+//				LightStatus[] topic = topics.get(i);
+//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
+//				
+//				finalJson.put( topicIdentifier, analyzer.getMainJson() );
+//				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
+//			}
 			
 		}		
 		

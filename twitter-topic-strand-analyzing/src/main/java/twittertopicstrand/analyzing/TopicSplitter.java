@@ -38,6 +38,8 @@ public class TopicSplitter {
 			rVal[hourId]++;
 		}
 		
+		System.out.println("firstIndexOfHours: " + Arrays.toString(firstIndexOfHours));
+		
 		return rVal;
 	}
 	
@@ -59,24 +61,18 @@ public class TopicSplitter {
 	}
 
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
+		
+		System.out.println("getSubset("+start+","+end+") called.");
+		
 		LightStatus[] rVal;
 			
-		System.out.println("---");
-		System.out.println(start +","+end);
+		System.out.println("start, end: " + start +","+end);
 		
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
-		if(to==0){
-			int temp = end;
-			do{
-				temp--;
-			}while(firstIndexOfHours[temp] != 0);
-			to = firstIndexOfHours[temp];
-		}
-		
-		System.out.println(from +","+to);
-		System.out.println("---");
+		System.out.println("from, to: " + from + "," + to);
+		System.out.println("length: " + statuses.length);
 		
 		rVal = Arrays.copyOfRange(statuses, from, to);
 		
@@ -91,11 +87,15 @@ public class TopicSplitter {
 		
 		int[] arr = createArray(statuses);
 		
+		System.out.println("original: " + Arrays.toString(arr));
+		
 		if(arr.length<minTopicLength){
 			return rVal;
 		}
 		
 		double[] filtered = SumPastNFilter(arr, k);
+		
+		System.out.println("filtered: " + Arrays.toString(filtered));
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;

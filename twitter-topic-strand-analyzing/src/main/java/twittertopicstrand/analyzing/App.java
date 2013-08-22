@@ -55,8 +55,7 @@ public class App {
     public static void main( String[] args ) throws IOException, JSONException {    	
     	System.out.println("hello ..");    	
     	
-    	//String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-removed";
-    	String lightStatusSourceDir = "/home/twtuser/lightstatus-minisubset";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-removed";
     	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
