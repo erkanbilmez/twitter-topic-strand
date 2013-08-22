@@ -47,7 +47,7 @@ public class TopicSplitter {
 		double[] rVal = new double[arr.length];
 		
 		for(int i=0;i<windowSize;i++){
-			rVal[i] = arr[0];
+			rVal[i] = arr[i];
 		}
 		
 		for(int i=windowSize;i<arr.length;i++){
@@ -68,8 +68,13 @@ public class TopicSplitter {
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
-		System.out.println("from: " + from);
-		System.out.println("to: " + to);
+		if(to==0){
+			int temp = end;
+			do{
+				temp--;
+			}while(firstIndexOfHours[temp] != 0);
+			to = temp;
+		}
 		
 		rVal = Arrays.copyOfRange(statuses, from, to);
 		
@@ -128,7 +133,6 @@ public class TopicSplitter {
 					if(end-start>minTopicLength){
 						LightStatus[] subset = getSubset(statuses, start, end);
 						rVal.add(subset);
-						System.out.println(start+","+end);
 					}
 					start = 0; end = 0; state = 0;
 				}
@@ -139,8 +143,7 @@ public class TopicSplitter {
 			end = filtered.length - 1;
 			if(end-start>minTopicLength){
 				LightStatus[] subset = getSubset(statuses, start, end);
-				rVal.add(subset);
-				System.out.println(start+","+end);				
+				rVal.add(subset);				
 			}
 		}
 		
