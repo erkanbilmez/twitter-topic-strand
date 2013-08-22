@@ -67,15 +67,21 @@ public class DataAnalyzer{
 
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 			
-			for(int i=0;i<topics.size();i++) {
-				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-				
-				LightStatus[] topic = topics.get(i);
-				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
-				
-				finalJson.put( hashTag, analyzer.getMainJson() );
-				indexJson.put( hashTag, analyzer.getIndexJSon() );
+			System.out.println(hashTag);
+			for(int i=0;i<topics.size();i++){
+				System.out.println(topics.get(i).length);
 			}
+			System.out.println("---");
+						
+//			for(int i=0;i<topics.size();i++) {
+//				String topicIdentifier = hashTag + "-" + String.valueOf(i);
+//				
+//				LightStatus[] topic = topics.get(i);
+//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
+//				
+//				finalJson.put( hashTag, analyzer.getMainJson() );
+//				indexJson.put( hashTag, analyzer.getIndexJSon() );
+//			}
 		}		
 		
 		String mainOutput = finalJson.toString();

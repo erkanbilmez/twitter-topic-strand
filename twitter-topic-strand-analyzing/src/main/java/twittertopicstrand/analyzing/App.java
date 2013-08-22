@@ -53,17 +53,10 @@ public class App {
 	}
 	
     public static void main( String[] args ) throws IOException, JSONException {    	
-    	System.out.println("hello ..");
+    	System.out.println("hello ..");    	
     	
-    	remove();
-   
-    	//String statusSourceDir = "/home/sait//Desktop/data";
-    	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
-    	//String lightStatusSourceDir = "/home/twtuser/lightstatus-minisubset";
-    	
-    	//StatusSource.convertLightStatusSource(statusSourceDir, lightStatusSourceDir, true);
-    	//DataAnalyzer.analyze(lightStatusSourceDir);
+    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-removed";
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }

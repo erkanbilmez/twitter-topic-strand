@@ -72,14 +72,16 @@ public class TopicSplitter {
 	public static List<LightStatus[]> splitTopics(String hashTag, LightStatus[] statuses) {
 		List<LightStatus[]> rVal = new ArrayList<LightStatus[]>();
 		
-		int[] arr = createArray(statuses);
-		
-		System.out.println("original: " + Arrays.toString(arr));
 		int k = 10;
 		int minTopicLength = 10;
 		
+		int[] arr = createArray(statuses);
+		
+		if(arr.length<minTopicLength){
+			return rVal;
+		}
+		
 		double[] filtered = SumPastNFilter(arr, k);
-		System.out.println("filtered: " + Arrays.toString(filtered));
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;
@@ -113,7 +115,6 @@ public class TopicSplitter {
 				}else{
 					end = i-1;
 					if(end-start>minTopicLength){
-						System.out.println(start + "," + end);
 						LightStatus[] subset = getSubset(statuses, start, end);
 						rVal.add(subset);
 					}
@@ -125,7 +126,6 @@ public class TopicSplitter {
 		if(state ==2) {
 			end = filtered.length - 1;
 			if(end-start>minTopicLength){
-				System.out.println(start + "," + end);
 				LightStatus[] subset = getSubset(statuses, start, end);
 				rVal.add(subset);
 			}
