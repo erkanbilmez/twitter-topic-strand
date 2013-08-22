@@ -82,7 +82,7 @@ public class DataAnalyzer{
 				System.out.println(f1 + ":" + f2);
 			}
 			
-			System.out.println(-----);
+			System.out.println("------");
 			
 //			for(int i=0;i<topics.size();i++) {
 //				String topicIdentifier = hashTag + "-" + String.valueOf(i);
