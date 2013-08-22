@@ -70,6 +70,8 @@ public class DataAnalyzer{
 			for(int i=0;i<topics.size();i++) {
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
 				
+				System.out.println(topicIdentifier);
+				
 				LightStatus[] topic = topics.get(i);
 				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
 				
