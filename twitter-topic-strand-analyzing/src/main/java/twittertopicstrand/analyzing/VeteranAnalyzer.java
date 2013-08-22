@@ -10,8 +10,8 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 
 public class VeteranAnalyzer {
-	float vetr_fraction = 0.9f;
-	int vetr_segcount = 10;
+	float vetr_fraction = 5.0f/6.0f;
+	int vetr_segcount = 6;
 	
 	public int veteranCount;
 	public int[] veteranCountsByHour;

@@ -51,8 +51,7 @@ public class DataAnalyzer{
 		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		LightStatus[] allLightStatuses = lsSource.getAll();
 		
-		//String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
-		String[] hashTags = new String[] {"direngaziparki"};
+		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
 		
 		System.out.println("selected hashtags:");
 		System.out.println(Arrays.toString(hashTags));
@@ -67,24 +66,16 @@ public class DataAnalyzer{
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
-			
-			System.out.println("#" + hashTag);
-			System.out.println("total: " + statuses.length);
-			
-			for(int i=0;i<topics.size();i++){
-				System.out.println(topics.get(i).length);
-			}
-			System.out.println("---");
 						
-//			for(int i=0;i<topics.size();i++) {
-//				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-//				
-//				LightStatus[] topic = topics.get(i);
-//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
-//				
-//				finalJson.put( hashTag, analyzer.getMainJson() );
-//				indexJson.put( hashTag, analyzer.getIndexJSon() );
-//			}
+			for(int i=0;i<topics.size();i++) {
+				String topicIdentifier = hashTag + "-" + String.valueOf(i);
+				
+				LightStatus[] topic = topics.get(i);
+				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
+				
+				finalJson.put( hashTag, analyzer.getMainJson() );
+				indexJson.put( hashTag, analyzer.getIndexJSon() );
+			}
 		}		
 		
 		String mainOutput = finalJson.toString();
