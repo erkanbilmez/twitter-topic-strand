@@ -121,6 +121,7 @@ public class TopicSplitter {
 					if(end-start>minTopicLength){
 						LightStatus[] subset = getSubset(statuses, start, end);
 						rVal.add(subset);
+						System.out.println(start+","+end);
 					}
 					start = 0; end = 0; state = 0;
 				}
@@ -132,6 +133,7 @@ public class TopicSplitter {
 			if(end-start>minTopicLength){
 				LightStatus[] subset = getSubset(statuses, start, end);
 				rVal.add(subset);
+				System.out.println(start+","+end);				
 			}
 		}
 		
