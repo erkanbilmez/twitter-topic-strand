@@ -65,29 +65,16 @@ public class DataAnalyzer{
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
+			System.out.println("##" + hashTag);
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
-		
-			DateTime start = new DateTime(statuses[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-			
-			System.out.println(hashTag);
-			System.out.println("number of topics: " + topics.size());
-			for(int i=0;i<topics.size();i++){
-				LightStatus[] topic = topics.get(i);
-				
-				System.out.println("topic length: " + topic.length);
-				
-				int f1 = HourOperations.getHourId(start, new DateTime(topic[0].createdAt));
-				int f2 = HourOperations.getHourId(start, new DateTime(topic[topic.length-1].createdAt));
-				
-				System.out.println(f1 + ":" + f2);
-			}
-			
 			System.out.println("------");
 			
 //			for(int i=0;i<topics.size();i++) {
 //				String topicIdentifier = hashTag + "-" + String.valueOf(i);
 //				
-//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, statuses);
+//				LightStatus[] topic = topics.get(i);
+//				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
+//				
 //				finalJson.put( hashTag, analyzer.getMainJson() );
 //				indexJson.put( hashTag, analyzer.getIndexJSon() );
 //			}
