@@ -51,7 +51,8 @@ public class DataAnalyzer{
 		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		LightStatus[] allLightStatuses = lsSource.getAll();
 		
-		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
+		//String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
+		String[] hashTags = new String[] {"direngaziparki"};
 		
 		System.out.println("selected hashtags:");
 		System.out.println(Arrays.toString(hashTags));
@@ -67,7 +68,9 @@ public class DataAnalyzer{
 
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 			
-			System.out.println(hashTag);
+			System.out.println("#" + hashTag);
+			System.out.println("total: " + statuses.length);
+			
 			for(int i=0;i<topics.size();i++){
 				System.out.println(topics.get(i).length);
 			}

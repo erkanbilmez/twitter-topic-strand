@@ -77,11 +77,15 @@ public class TopicSplitter {
 		
 		int[] arr = createArray(statuses);
 		
+		System.out.println("original: " + Arrays.toString(arr));
+		
 		if(arr.length<minTopicLength){
 			return rVal;
 		}
 		
 		double[] filtered = SumPastNFilter(arr, k);
+		
+		System.out.println("filtered: " + Arrays.toString(filtered));
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;
