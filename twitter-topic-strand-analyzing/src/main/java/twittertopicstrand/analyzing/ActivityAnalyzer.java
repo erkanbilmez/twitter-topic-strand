@@ -16,7 +16,6 @@ import twittertopicstrand.util.Pair;
 public class ActivityAnalyzer {
 	public static void analyzeAll(String path, String[] arr) throws IOException{
 		LightStatusSource src = new LightStatusSource(path);
-		
 		LightStatus[] statuses = src.getAll();
 		
 		for(int i=0;i<arr.length;i++){
@@ -35,7 +34,10 @@ public class ActivityAnalyzer {
 		
 		LightStatus[] subset = temp.toArray(new LightStatus[temp.size()]);
 	
-		DateTime start = new DateTime(subset[0].createdAt);
+		DateTime start = null;
+		
+		if(subset.length>0)
+			start = new DateTime(subset[0].createdAt);
 		
 		int[] arr = TopicSplitter.createArray(subset);
 		

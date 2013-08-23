@@ -18,7 +18,7 @@ public class TopicSplitter {
 	static int windowSize = 10;
 	static int minTopicLength = 10; // hours
 	
-	static double lowThreshold = 3;
+	static double lowThreshold = 10;
 	static double highThreshold = 50;	
 	
 	static int[] firstIndexOfHours;

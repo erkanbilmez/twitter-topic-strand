@@ -43,9 +43,8 @@ public class App {
 	}
 	
 	public static void analyzeActivity() throws IOException{
-		String path = "/home/twtuser/lightstatuses-removed";
-		String[] arr = new String[] 
-    			{ "direngeziparkı", "direngeziparki", "occupygezi", 
+		String path = "/home/twtuser/lightstatus-subset-removed";
+		String[] arr = new String[] { "direngeziparkı", "direngeziparki", "occupygezi", 
     			"direnankara", "redhack", "direngezi", "direngaziparki", 
     			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
     			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
