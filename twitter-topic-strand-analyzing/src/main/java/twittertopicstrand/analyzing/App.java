@@ -23,6 +23,8 @@ public class App {
     	
     	String[] hashTags = HashtagSelector.getHashTags(lsource.getAll());
     	
+    	System.out.println(Arrays.toString(hashTags));
+    
     	HashTagRemover.convert(dest, finalDest, hashTags);
 	}
 	
