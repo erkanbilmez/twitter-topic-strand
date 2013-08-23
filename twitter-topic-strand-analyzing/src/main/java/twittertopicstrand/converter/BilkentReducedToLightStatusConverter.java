@@ -60,9 +60,14 @@ public class BilkentReducedToLightStatusConverter {
 		
 		for(int i=0;i<files.length;i++){
 			String sourceFile = files[i];
+			String destFile = destDir + File.separator + FileOperations.getOnlyFileName(sourceFile);
+			
+			if(FileOperations.fileExists(destFile)){
+				System.out.println("skipping, already done: " + sourceFile);
+				continue;
+			}
 			
 			System.out.println(sourceFile);
-			String destFile = destDir + File.separator + FileOperations.getOnlyFileName(sourceFile);
 			
 			String tempFile = destDir + File.separator + UUID.randomUUID();
 			

@@ -17,7 +17,7 @@ import twitter4j.Status;
 import twitter4j.StatusFactory;
 
 public class FileOperations {
-
+	
     public static String getOnlyFileName(String path){
         return path.substring(path.lastIndexOf("/") + 1);
     }
