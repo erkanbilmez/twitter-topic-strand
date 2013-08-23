@@ -4,10 +4,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import twitter4j.TwitterException;
 
-/**
- * Hello world!
- *
- */
 public class App {
 	
     public static void main( String[] args ) throws ParserConfigurationException, IOException, SAXException, TwitterException {
@@ -18,6 +14,5 @@ public class App {
     	String finalOutputPath = "/home/twtuser/logging/tweets";
     	
     	StreamWorker.startStreaming(selectedUsersPath, apiUsersPath, tempOutputPath, finalOutputPath);  
-    	
     }
 }

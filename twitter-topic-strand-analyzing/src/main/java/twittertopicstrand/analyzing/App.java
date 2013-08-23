@@ -9,14 +9,21 @@ import java.util.HashSet;
 import twitter4j.internal.org.json.JSONException;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.converter.HashTagRemover;
+import twittertopicstrand.sources.LightStatusSource;
 
 public class App {
 		
 	public static void convert() throws IOException{
-    	String src = "/home/twtuser/reduced-tweets-subset";
-    	String dest = "/home/twtuser/lightstatus-subset";
+    	String src = "/home/twtuser/reduced-tweets";
+    	String dest = "/home/twtuser/lightstatuses";
+    	String finalDest = "/home/twtuser/lightstatuses-removed";
     	
     	BilkentReducedToLightStatusConverter.convert(src, dest, true);
+    	LightStatusSource lsource = new LightStatusSource(dest);
+    	
+    	String[] hashTags = HashtagSelector.getHashTags(lsource.getAll());
+    	
+    	HashTagRemover.convert(dest, finalDest, hashTags);
 	}
 	
 	public static void remove() throws IOException {
@@ -36,8 +43,9 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
     	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatus-subset-removed";
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	convert();
+    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
+        DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
