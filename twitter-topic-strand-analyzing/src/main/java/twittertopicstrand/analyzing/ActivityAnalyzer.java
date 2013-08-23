@@ -11,11 +11,11 @@ import twitter4j.LightStatus;
 import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.HourOperations;
+import twittertopicstrand.util.Pair;
 
 public class ActivityAnalyzer {
-	public static void analyzeAll(String[] arr) throws IOException{
-		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
-		LightStatusSource src = new LightStatusSource(lightStatusSourceDir);
+	public static void analyzeAll(String path, String[] arr) throws IOException{
+		LightStatusSource src = new LightStatusSource(path);
 		
 		LightStatus[] statuses = src.getAll();
 		
@@ -24,8 +24,8 @@ public class ActivityAnalyzer {
 		}
 	}
 	
-	public static void analyze(LightStatus[] statuses, String hashTag) throws IOException{
-		
+	private static void analyze(LightStatus[] statuses, String hashTag) throws IOException{
+	
 		List<LightStatus> temp = new ArrayList<LightStatus>();
 		for(int i=0;i<statuses.length;i++){
 			if( Arrays.asList( statuses[i].hashTags ).contains(hashTag)){
@@ -34,29 +34,27 @@ public class ActivityAnalyzer {
 		}
 		
 		LightStatus[] subset = temp.toArray(new LightStatus[temp.size()]);
-		DateTime start = new DateTime(subset[0].createdAt);
-		DateTime end = new DateTime(subset[subset.length-1].createdAt);
 	
-		int length = HourOperations.getHourId(start, end) + 1;
+		DateTime start = new DateTime(subset[0].createdAt);
 		
-		System.out.println("hashtag:" + hashTag);
-		System.out.println("start:" + start);
-		System.out.println("end:" + end);
-		System.out.println("length" + length);		
-		System.out.println("------");
+		int[] arr = TopicSplitter.createArray(subset);
 		
-		int[] activity = new int[length];
+		if( arr.length < TopicSplitter.minTopicLength )
+			return;
 		
-		for(int i=0;i<subset.length;i++){
-			int hourId = HourOperations.getHourId(start, new DateTime(subset[i].createdAt));
-			activity[hourId]++;
-		}
+		double[] filtered = TopicSplitter.SumPastNFilter(arr);
 		
-		String line = "createPdf('" + hashTag + "'," + gettRArr(activity) + "," + start.getHourOfDay() + ")";
-		FileOperations.addLine(line, "/home/twtuser/createPdf.r");
+		List<Pair<Integer,Integer>> pairs = TopicSplitter.getCoordinates(filtered);
+			
+		String line = "createPng('" + hashTag + "'," + 
+					gettRArrFromArray(arr) + "," + 
+						start.getHourOfDay() + "," + 
+							getRArrFromPairs(pairs) + ")";
+		
+		FileOperations.addLine(line, "/home/twtuser/createPng.r");
 	}
 	
-	private static String gettRArr(int[] arr){
+	private static String gettRArrFromArray(int[] arr){
 		String rVal = "c(";
 
 		for(int i=0;i<arr.length-1;i++){
@@ -64,6 +62,21 @@ public class ActivityAnalyzer {
 		}
 		rVal += String.valueOf(arr[arr.length-1]) + ")";
 
+		return rVal;
+	}
+	
+	private static String getRArrFromPairs(List<Pair<Integer,Integer>> pairs){
+		String rVal = "c(";
+		
+		int i=0;
+		for(i=0;i<pairs.size()-1;i++){
+			Pair<Integer,Integer> pair = pairs.get(i);
+			rVal += pair.getLeft() + "," + pair.getRight() + ",";
+		}
+		
+		Pair<Integer,Integer> pair = pairs.get(i);
+		rVal += pair.getLeft() + "," + pair.getRight() + ")";
+		
 		return rVal;
 	}
 

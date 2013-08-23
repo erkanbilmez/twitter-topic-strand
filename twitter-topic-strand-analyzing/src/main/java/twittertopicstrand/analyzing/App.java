@@ -38,16 +38,29 @@ public class App {
     			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
     			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
     			"tayyipistifa", "cevapver" };
-    	
+    
     	HashTagRemover.convert(src, dest, arr);
+	}
+	
+	public static void analyzeActivity() throws IOException{
+		String path = "/home/twtuser/lightstatuses-removed";
+		String[] arr = new String[] 
+    			{ "direngeziparkı", "direngeziparki", "occupygezi", 
+    			"direnankara", "redhack", "direngezi", "direngaziparki", 
+    			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
+    			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
+    			"tayyipistifa", "cevapver" };
+		ActivityAnalyzer.analyzeAll(path, arr);
 	}
 	
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
     	
-    	convert();
-    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
-        DataAnalyzer.analyze(lightStatusSourceDir);
+    	analyzeActivity();
+    	
+//    	convert();
+//    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
+//    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }

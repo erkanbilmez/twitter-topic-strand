@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 import twitter4j.LightStatus;
 import twittertopicstrand.util.HourOperations;
+import twittertopicstrand.util.Pair;
 
 public class TopicSplitter { 
 	
@@ -22,7 +23,7 @@ public class TopicSplitter {
 	
 	static int[] firstIndexOfHours;
 	
-	private static int[] createArray(LightStatus[] statuses){
+	public static int[] createArray(LightStatus[] statuses){
 		int[] rVal;
 		
 		DateTime start = new DateTime(statuses[0].createdAt);
@@ -48,7 +49,7 @@ public class TopicSplitter {
 		return rVal;
 	}
 	
-	private static double[] SumPastNFilter(int[] arr, int windowSize){
+	public static double[] SumPastNFilter(int[] arr){
 		double[] rVal = new double[arr.length];
 		
 		for(int i=0;i<windowSize-1;i++){
@@ -63,6 +64,28 @@ public class TopicSplitter {
 		}
 		
 		return rVal;
+	}
+	
+	public static boolean subsetExists(int start, int end){
+		int from = firstIndexOfHours[start];
+		int to = firstIndexOfHours[end];
+		
+		while(from==-1){
+			start++;
+			from = firstIndexOfHours[start];
+		}
+		while(to ==-1){
+			end--;
+			to = firstIndexOfHours[end];
+		}
+		
+		to = to-1;
+		
+		if( end-start > minTopicLength ){
+			return true;
+		}
+		
+		return false;
 	}
 
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
@@ -90,9 +113,8 @@ public class TopicSplitter {
 		return rVal;
 	}
 	
-	public static List<LightStatus[]> startStateMachine(double[] filtered, LightStatus[] statuses){
-		
-		List<LightStatus[]> rVal = new ArrayList<LightStatus[]> ();
+	public static List<Pair<Integer, Integer>> getCoordinates(double[] filtered){
+		List<Pair<Integer, Integer>> rVal = new ArrayList<Pair<Integer, Integer>>();
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;
@@ -126,9 +148,10 @@ public class TopicSplitter {
 				}else{
 					end = i-1;
 					if(end-start > minTopicLength){
-						LightStatus[] subset = getSubset(statuses, start, end);
-						if(subset!=null)
-							rVal.add(subset);
+						if(subsetExists(start, end)){
+							Pair<Integer,Integer> tuple = new Pair<Integer,Integer>(start,end);
+							rVal.add(tuple);
+						}
 					}
 					start = 0; end = 0; state = 0;
 				}
@@ -138,16 +161,33 @@ public class TopicSplitter {
 		if(state ==2) {
 			end = filtered.length - 1;
 			if(end-start > minTopicLength){
-				LightStatus[] subset = getSubset(statuses, start, end);
-				if(subset!=null)
-					rVal.add(subset);				
+				if(subsetExists(start, end)){
+					Pair<Integer,Integer> tuple = new Pair<Integer,Integer>(start,end);
+					rVal.add(tuple);
+				}				
 			}
+		}
+		
+		return rVal;	
+	}
+	
+	public static List<LightStatus[]> getParts(LightStatus[] statuses, List<Pair<Integer,Integer>> pairs){
+		List<LightStatus[]> rVal = new ArrayList<LightStatus[]> ();
+		
+		for(Pair<Integer,Integer> pair : pairs){
+			int left = pair.getLeft();
+			int right = pair.getRight();
+			
+			LightStatus[] temp = Arrays.copyOfRange(statuses, left, right);
+			
+			if(temp.length>0)
+				rVal.add(temp);
 		}
 		
 		return rVal;
 	}
 	
-	public static List<LightStatus[]> splitTopics(String hashTag, LightStatus[] statuses) {
+	public static List<LightStatus[]> splitTopics(LightStatus[] statuses) {
 		
 		List<LightStatus[]> rVal;
 		
@@ -156,9 +196,10 @@ public class TopicSplitter {
 		if( arr.length < minTopicLength )
 			return new ArrayList<LightStatus[]>();
 		
-		double[] filtered = SumPastNFilter(arr, windowSize);
+		double[] filtered = SumPastNFilter(arr);
 		
-		rVal = startStateMachine(filtered, statuses);
+		List<Pair<Integer,Integer>> pairs = getCoordinates(filtered);
+		rVal = getParts(statuses, pairs);
 		
 		return rVal;
 	}
