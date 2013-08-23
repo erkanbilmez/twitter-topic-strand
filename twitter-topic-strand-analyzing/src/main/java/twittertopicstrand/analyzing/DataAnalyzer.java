@@ -69,7 +69,7 @@ public class DataAnalyzer{
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
-			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
+			List<LightStatus[]> topics = TopicSplitter.splitTopics(statuses);
 			
 			for(int i=0;i<topics.size();i++) {
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
@@ -84,7 +84,7 @@ public class DataAnalyzer{
 			}
 		}		
 		
-		String indexFileName = outputDirectory + File.separatorChar + "index" + ".json";
+		String indexFileName = outputDirectory + File.separatorChar + "@index" + ".json";
 		FileOperations.writeFile(indexJson.toString(), indexFileName);
 	}
 }
