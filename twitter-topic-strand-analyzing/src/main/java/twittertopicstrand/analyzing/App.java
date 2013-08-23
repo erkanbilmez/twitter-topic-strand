@@ -55,11 +55,11 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
     	
-    	analyzeActivity();
+    	//analyzeActivity();
     	
-//    	convert();
-//    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
-//    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	convert();
+    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
