@@ -14,6 +14,9 @@ import twittertopicstrand.util.HourOperations;
 
 public class TopicSplitter { 
 	
+	static int windowSize = 10;
+	static int minTopicLength = 10; // hours
+	
 	static double lowThreshold = 3;
 	static double highThreshold = 50;	
 	
@@ -22,35 +25,37 @@ public class TopicSplitter {
 	private static int[] createArray(LightStatus[] statuses){
 		int[] rVal;
 		
-		DateTime start = new DateTime(statuses[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		DateTime end = new DateTime(statuses[statuses.length-1].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime start = new DateTime(statuses[0].createdAt);
+		DateTime end = new DateTime(statuses[statuses.length-1].createdAt);
 		
 		int length = HourOperations.getHourId(start, end) + 1;
 		
 		rVal = new int[length];
 		firstIndexOfHours = new int[length];
 		
+		for(int i=0;i<firstIndexOfHours.length;i++){
+			firstIndexOfHours[i] = -1;
+		}
+		
 		for(int i=0;i<statuses.length;i++){
 			int hourId = HourOperations.getHourId(start, new DateTime ( statuses[i].createdAt ));
-			if(rVal[hourId] == 0){
+			if(rVal[hourId] == 0) {
 				firstIndexOfHours[hourId] = i;
 			}
 			rVal[hourId]++;
 		}
-		
-		System.out.println("firstIndexOfHours: " + Arrays.toString(firstIndexOfHours));
-		
+	
 		return rVal;
 	}
 	
 	private static double[] SumPastNFilter(int[] arr, int windowSize){
 		double[] rVal = new double[arr.length];
 		
-		for(int i=0;i<windowSize;i++){
+		for(int i=0;i<windowSize-1;i++){
 			rVal[i] = arr[i];
 		}
 		
-		for(int i=windowSize;i<arr.length;i++){
+		for(int i=windowSize-1;i<arr.length;i++){
 			for(int j=i-windowSize+1;j<=i;j++){
 				rVal[i] += arr[j];
 			}
@@ -62,46 +67,38 @@ public class TopicSplitter {
 
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
 		
-		System.out.println("getSubset("+start+","+end+") called.");
-		
-		LightStatus[] rVal;
+		LightStatus[] rVal = null;
 			
-		System.out.println("start, end: " + start +","+end);
-		
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
-		System.out.println("from, to: " + from + "," + to);
-		System.out.println("length: " + statuses.length);
+		while(from==-1){
+			start++;
+			from = firstIndexOfHours[start];
+		}
+		while(to ==-1){
+			end--;
+			to = firstIndexOfHours[end];
+		}
 		
-		rVal = Arrays.copyOfRange(statuses, from, to);
+		to = to-1;
 		
+		if( end-start > minTopicLength ){
+			rVal = Arrays.copyOfRange(statuses, from, to);
+		}
+	
 		return rVal;
 	}
 	
-	public static List<LightStatus[]> splitTopics(String hashTag, LightStatus[] statuses) {
-		List<LightStatus[]> rVal = new ArrayList<LightStatus[]>();
+	public static List<LightStatus[]> startStateMachine(double[] filtered, LightStatus[] statuses){
 		
-		int k = 10;
-		int minTopicLength = 10;
-		
-		int[] arr = createArray(statuses);
-		
-		System.out.println("original: " + Arrays.toString(arr));
-		
-		if(arr.length<minTopicLength){
-			return rVal;
-		}
-		
-		double[] filtered = SumPastNFilter(arr, k);
-		
-		System.out.println("filtered: " + Arrays.toString(filtered));
+		List<LightStatus[]> rVal = new ArrayList<LightStatus[]> ();
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;
 		int end=0;
 		
-		for(int i=0;i<filtered.length;i++) {
+		for( int i=0;i<filtered.length;i++ ) {
 			double current = filtered[i];
 			if(state==0){
 				if(current>highThreshold){
@@ -128,9 +125,10 @@ public class TopicSplitter {
 					// do nothing, continue..
 				}else{
 					end = i-1;
-					if(end-start>minTopicLength){
+					if(end-start > minTopicLength){
 						LightStatus[] subset = getSubset(statuses, start, end);
-						rVal.add(subset);
+						if(subset!=null)
+							rVal.add(subset);
 					}
 					start = 0; end = 0; state = 0;
 				}
@@ -139,11 +137,28 @@ public class TopicSplitter {
 		
 		if(state ==2) {
 			end = filtered.length - 1;
-			if(end-start>minTopicLength){
+			if(end-start > minTopicLength){
 				LightStatus[] subset = getSubset(statuses, start, end);
-				rVal.add(subset);				
+				if(subset!=null)
+					rVal.add(subset);				
 			}
 		}
+		
+		return rVal;
+	}
+	
+	public static List<LightStatus[]> splitTopics(String hashTag, LightStatus[] statuses) {
+		
+		List<LightStatus[]> rVal;
+		
+		int[] arr = createArray(statuses);
+		
+		if( arr.length < minTopicLength )
+			return new ArrayList<LightStatus[]>();
+		
+		double[] filtered = SumPastNFilter(arr, windowSize);
+		
+		rVal = startStateMachine(filtered, statuses);
 		
 		return rVal;
 	}

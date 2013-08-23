@@ -10,25 +10,34 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 
 public class VeteranAnalyzer {
-	float vetr_fraction = 5.0f/6.0f;
-	int vetr_segcount = 6;
+	float vetr_fraction = 0.9f;
+	int vetr_segcount = 10;
 	
 	public int veteranCount;
 	public int[] veteranCountsByHour;
 	public HashSet<Long> veterans;
 	
-	private HashSet<Long> getVeterans(ArrayList<HashMap<Long, Integer>> participants) {
-		
-		System.out.println(participants.size());
-		
+	private HashSet<Long> getVeterans(ArrayList<HashMap<Long, Integer>> hourlyParticipants) throws Exception {
 		int numOfChunks = vetr_segcount;
-		int numOfItemsPerChunk = participants.size() / numOfChunks;
+		int numOfItemsPerChunk = hourlyParticipants.size() / numOfChunks;
 		int minChunkCountForVeteran = (int) (numOfChunks * vetr_fraction);
 			
 		HashSet<Long> rVal = new HashSet<Long>();
 		
 		if(numOfItemsPerChunk == 0){
-			return rVal;
+			throw new Exception("numOfItemsPerChunk cannot be zero.");
+		}
+		
+		int[] numOfItemsPerChunkArr = new int[numOfChunks];
+		
+		for(int i=0;i<numOfItemsPerChunkArr.length;i++){
+			numOfItemsPerChunkArr[i] = numOfItemsPerChunk;
+		}
+		
+		int remainder = hourlyParticipants.size() - (numOfItemsPerChunk * numOfChunks);
+		
+		for(int i=0;i<remainder;i++){
+			numOfItemsPerChunkArr[i]++;
 		}
 		
 		ArrayList<HashSet<Long>> temp = new ArrayList<HashSet<Long>>(numOfChunks);
@@ -37,19 +46,20 @@ public class VeteranAnalyzer {
 		for(int i=0;i<numOfChunks;i++){
 			temp.add(new HashSet<Long>());
 		}
-			
-		for(int i=0;i<participants.size();i++){
-			
-			int chunkId = i / numOfItemsPerChunk;
 		
-			if(chunkId < numOfChunks){
-				for(Map.Entry<Long, Integer> entry: participants.get(i).entrySet() ){
-					long userId = entry.getKey();
+		int index = 0;
+		for(int i=0;i<numOfItemsPerChunkArr.length;i++){
+			int chunkId = i;
 			
+			for(int j=0;j<numOfItemsPerChunkArr[i];j++){
+				for(Map.Entry<Long, Integer> entry: hourlyParticipants.get(index).entrySet()){
+					long userId = entry.getKey();
+					
 					if(!temp.get(chunkId).contains(userId)){
 						temp.get(chunkId).add(userId);
 					}
-				}			
+				}
+				index++;
 			}
 		}
 		
@@ -69,7 +79,7 @@ public class VeteranAnalyzer {
 		return rVal;
 	}
 	
-	public void analyze(ArrayList<HashMap<Long, Integer>> participants, HashSet<Long> allParticipants) {
+	public void analyze(ArrayList<HashMap<Long, Integer>> participants, HashSet<Long> allParticipants) throws Exception {
 		
 		this.veteranCountsByHour = new int[participants.size()];
 		

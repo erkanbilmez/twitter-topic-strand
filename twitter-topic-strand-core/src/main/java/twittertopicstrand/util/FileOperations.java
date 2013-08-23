@@ -16,8 +16,6 @@ import twitter4j.LightStatus;
 import twitter4j.Status;
 import twitter4j.StatusFactory;
 
-// hello world
-
 public class FileOperations {
 
     public static String getOnlyFileName(String path){

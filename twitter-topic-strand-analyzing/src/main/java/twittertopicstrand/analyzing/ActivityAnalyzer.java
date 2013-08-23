@@ -13,7 +13,6 @@ import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.HourOperations;
 
 public class ActivityAnalyzer {
-	
 	public static void analyzeAll(String[] arr) throws IOException{
 		String lightStatusSourceDir = "/home/twtuser/lightstatus-subset";
 		LightStatusSource src = new LightStatusSource(lightStatusSourceDir);
@@ -35,8 +34,8 @@ public class ActivityAnalyzer {
 		}
 		
 		LightStatus[] subset = temp.toArray(new LightStatus[temp.size()]);
-		DateTime start = new DateTime(subset[0].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		DateTime end = new DateTime(subset[subset.length-1].createdAt).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime start = new DateTime(subset[0].createdAt);
+		DateTime end = new DateTime(subset[subset.length-1].createdAt);
 	
 		int length = HourOperations.getHourId(start, end) + 1;
 		

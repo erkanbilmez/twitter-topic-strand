@@ -18,7 +18,6 @@
   <modules>
     <module>twitter-topic-strand-core</module>
     <module>twitter-topic-strand-logging</module>
-    <module>org-json-simple</module>
     <module>twitter4j-core</module>
     <module>twitter4j-stream</module>
     <module>twitter-topic-strand-analyzing</module>

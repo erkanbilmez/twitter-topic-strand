@@ -1,5 +1,6 @@
 package twittertopicstrand.analyzing;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import com.google.gson.GsonBuilder;
 
 public class DataAnalyzer{
 	
-  	static JSONObject finalJson = new JSONObject();
+  	static String outputDirectory = "/home/twtuser/outputs/";
   	static JSONObject indexJson = new JSONObject();
 		
   	private static Map<String, List<LightStatus>> splitByHashTag(String[] selectedHashTags, LightStatus[] statuses){
@@ -46,7 +47,12 @@ public class DataAnalyzer{
   		return rVal;
   	}
   	
-	public static void analyze(String folderPath) throws IOException, JSONException {
+	public static void analyze(String folderPath) throws Throwable {
+		
+		File f = new File(outputDirectory);
+		if(!f.exists()){
+			f.mkdir();
+		}
 		
 		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		LightStatus[] allLightStatuses = lsSource.getAll();
@@ -58,38 +64,27 @@ public class DataAnalyzer{
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
 		
 		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()) {
-			
 			String hashTag = entry.getKey();
 			List<LightStatus> lstStatus = entry.getValue();
 			
 			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
 
-			System.out.println("#" + hashTag);
-			
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(hashTag, statuses);
 			
 			for(int i=0;i<topics.size();i++) {
-				try{
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-				
-				System.out.println(topicIdentifier);
 				
 				LightStatus[] topic = topics.get(i);
 				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
 				
-				finalJson.put( topicIdentifier, analyzer.getMainJson() );
+				String fileName = outputDirectory + File.separatorChar + topicIdentifier + ".json";
+				
+				FileOperations.writeFile(analyzer.getMainJson().toString(), fileName);
 				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
-				}catch(Exception ex){
-					
-				}
 			}
-			
 		}		
 		
-		String mainOutput = finalJson.toString();
-		String indexOutput = indexJson.toString();
-		
-		FileOperations.writeFile(mainOutput, "/home/twtuser/mainOutput.txt");
-		FileOperations.writeFile(indexOutput, "/home/twtuser/indexOutput.txt");
+		String indexFileName = outputDirectory + File.separatorChar + "index" + ".json";
+		FileOperations.writeFile(indexJson.toString(), indexFileName);
 	}
 }

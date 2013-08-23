@@ -1,22 +1,13 @@
 package twittertopicstrand.analyzing;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
 
 import twitter4j.LightStatus;
-import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.util.HourOperations;
@@ -32,13 +23,13 @@ public class TopicAnalyzer {
 	DateTime firstTime;
 	DateTime lastTime;
 	
-	ArrayList <HashMap<Long, Integer> > participants;
+	ArrayList <HashMap<Long, Integer> > hourlyParticipants;
 	HashSet<Long> allParticipants = new HashSet<Long>();
 		      
 	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
 	HeroAnalyzer heroAnalyzer = new HeroAnalyzer();
 	
-	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws IOException, JSONException {
+	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws Throwable {
 		this.topicIdentifier = topicIdentifier;
 		this.statuses = statuses;
 		
@@ -48,42 +39,40 @@ public class TopicAnalyzer {
 		this.init();
 	}
 	
-	private void init() throws JSONException{
+	private void init() throws Exception {
 		
-		DateTime start = this.firstTime.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		DateTime end = this.lastTime.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		
-		int length = HourOperations.getHourId(start, end) + 1;
-		participants = new ArrayList< HashMap<Long, Integer> > (length);
+		int length = HourOperations.getHourId(this.firstTime, this.lastTime) + 1;
+		hourlyParticipants = new ArrayList< HashMap<Long, Integer> > (length);
 		
 		for(int i=0;i<length;i++) {
-			participants.add( new HashMap<Long, Integer>() );
+			hourlyParticipants.add( new HashMap<Long, Integer>() );
 		}
 			
 		for(int i=0;i<statuses.length;i++) {
 			long userId = statuses[i].userId;
-			int hourId = HourOperations.getHourId(start, new DateTime ( statuses[i].createdAt ));
+			int hourId = HourOperations.getHourId(this.firstTime, new DateTime ( statuses[i].createdAt ));
 			
-			int count = participants.get(hourId).containsKey(userId) ? participants.get(hourId).get(userId) : 0;
-			participants.get(hourId).put(userId, count + 1);
+			int count = hourlyParticipants.get(hourId).containsKey(userId) ? 
+									hourlyParticipants.get(hourId).get(userId) : 0;
+			hourlyParticipants.get(hourId).put(userId, count + 1);
 			
 			if(!allParticipants.contains(userId)){
 				allParticipants.add(userId);
 			}
 		}
 		
-		this.veteranAnalyzer.analyze(participants, allParticipants);
-		this.heroAnalyzer.analyze(participants, allParticipants, this.statuses);
+		this.veteranAnalyzer.analyze(hourlyParticipants, allParticipants);
+		this.heroAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		
 		this.initJSONObject();
 	}
 	
 	private int[] getTweetVolumes(){
-		int[] rVal = new int[this.participants.size()];
+		int[] rVal = new int[this.hourlyParticipants.size()];
 		
-		for(int i=0;i<participants.size();i++){
+		for(int i=0;i<hourlyParticipants.size();i++){
 			int total = 0;
-			HashMap<Long, Integer> hour = participants.get(i);
+			HashMap<Long, Integer> hour = hourlyParticipants.get(i);
 			for(Map.Entry<Long, Integer> entry: hour.entrySet()){
 				total += entry.getValue();
 			}
@@ -94,10 +83,10 @@ public class TopicAnalyzer {
 	}
 	
 	private int[] getParticipantVolumes() {
-		int[] rVal = new int[this.participants.size()];
+		int[] rVal = new int[this.hourlyParticipants.size()];
 		
-		for(int i=0;i<participants.size();i++){
-			rVal[i] = participants.get(i).size(); 
+		for(int i=0;i<hourlyParticipants.size();i++){
+			rVal[i] = hourlyParticipants.get(i).size(); 
 		}
 		
 		return rVal;
