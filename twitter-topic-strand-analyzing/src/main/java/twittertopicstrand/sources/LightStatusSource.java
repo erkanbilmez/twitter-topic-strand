@@ -40,6 +40,8 @@ public class LightStatusSource {
 		
         BufferedReader br = new BufferedReader(new FileReader(this.files[this.currentIndex]));
         
+        System.out.println(this.files[this.currentIndex]);
+        
         String line;
         LightStatus temp;
         
