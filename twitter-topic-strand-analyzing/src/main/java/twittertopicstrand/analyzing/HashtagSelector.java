@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import twitter4j.LightStatus;
+import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.util.MapOperations;
 
 public class HashtagSelector {
@@ -28,6 +29,32 @@ public class HashtagSelector {
 				}		
 			}			
 		}	
+		
+		return rVal;
+	}
+	
+	private static Map<String, Integer> createHashMap(String path) throws IOException {
+		Map<String, Integer> rVal = new HashMap<String, Integer>();
+		LightStatusSource src = new LightStatusSource(path);
+		
+		do{
+			LightStatus[] statuses = src.getChunk();
+			
+			for(int i=0;i<statuses.length;i++) {
+				for(int j=0;j<statuses[i].hashTags.length;j++){
+					String currentHashTag = statuses[i].hashTags[j].toLowerCase();
+					
+					if(!rVal.containsKey(currentHashTag)) {						
+						rVal.put(currentHashTag, 1);
+					}else{
+						rVal.put(currentHashTag, rVal.get(currentHashTag) + 1);
+					}		
+				}			
+			}
+			
+		}while(src.iterate());
+		
+			
 		
 		return rVal;
 	}
@@ -57,7 +84,36 @@ public class HashtagSelector {
 		return rVal;		
 	}
 	
+	private static String[] getMostTweetedNHashTags(String path, int n) throws IOException {
+		String[] rVal = null;
+		
+		List<String> rValList = new ArrayList<String>();
+		
+		Map myHashMap = createHashMap(path);
+		Map<String, Integer> sortedMap = MapOperations.sortMapByValue(myHashMap);
+		
+		int i = 0;
+		
+		for (Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
+			String temp = entry.getKey();
+			rValList.add(temp);
+			i++;
+			
+			if(i+1 > n) {
+				break;
+			}
+		}
+		
+		rVal = rValList.toArray(new String[rValList.size()]);
+		
+		return rVal;		
+	}
+	
 	public static String[] getHashTags(LightStatus[] statuses) throws IOException{
 		return getMostTweetedNHashTags(statuses, mostNHashtags);
+	}
+	
+	public static String[] getHashTags(String path) throws IOException{
+		return getMostTweetedNHashTags(path, mostNHashtags);
 	}
 }

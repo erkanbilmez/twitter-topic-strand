@@ -19,9 +19,8 @@ public class App {
     	String finalDest = "/home/twtuser/lightstatuses-removed";
     	
     	BilkentReducedToLightStatusConverter.convert(src, dest, true);
-    	LightStatusSource lsource = new LightStatusSource(dest);
     	
-    	String[] hashTags = HashtagSelector.getHashTags(lsource.getAll());
+    	String[] hashTags = HashtagSelector.getHashTags(dest);
     	
     	System.out.println(Arrays.toString(hashTags));
     
