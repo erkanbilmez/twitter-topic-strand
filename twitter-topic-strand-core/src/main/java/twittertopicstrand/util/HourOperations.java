@@ -1,5 +1,7 @@
 package twittertopicstrand.util;
 
+import java.util.Date;
+
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
@@ -10,6 +12,13 @@ public class HourOperations {
 	
 	public static DateTime onlyHour(DateTime dt){
 		return dt.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+	}
+	
+	public static int getHourId(Date start, Date dt){		
+		DateTime s = new DateTime(start);
+		DateTime d = new DateTime(dt);
+		
+		return getHourId(s,d);
 	}
 	
 	public static int getHourId(DateTime start, DateTime dt){		

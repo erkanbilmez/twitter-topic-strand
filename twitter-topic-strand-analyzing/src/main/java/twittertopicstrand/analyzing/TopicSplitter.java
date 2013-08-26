@@ -95,20 +95,17 @@ public class TopicSplitter {
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
-		while(from==-1){
-			start++;
-			from = firstIndexOfHours[start];
-		}
-		while(to ==-1){
-			end--;
-			to = firstIndexOfHours[end];
-		}
+		if(from == -1 || to == -1) {
+			System.out.println("from: " + from);
+			System.out.println("to: " + to);
+			System.out.println("bir index hatasi olmus olabilir.");
+		} 
 		
-		to = to-1;
+		rVal = Arrays.copyOfRange(statuses, from, to);
 		
-		if( end-start > minTopicLength ){
-			rVal = Arrays.copyOfRange(statuses, from, to);
-		}
+		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
+
+		System.out.println("startIndex: " + start + "endIndex: " + end + "real length: " + length);
 	
 		return rVal;
 	}
@@ -147,19 +144,15 @@ public class TopicSplitter {
 					// do nothing, continue..
 				}else{
 					end = i-1;
-					if(end-start > minTopicLength){
-						addSubset(start, end, rVal);
-					}
+					addSubset(start, end, rVal);
 					start = 0; end = 0; state = 0;
 				}
 			}
 		}
 		
-		if(state ==2) {
+		if( state == 2 ) {
 			end = filtered.length - 1;
-			if(end-start > minTopicLength){
-				addSubset(start,end, rVal);
-			}
+			addSubset(start,end, rVal);
 		}
 		
 		return rVal;	
