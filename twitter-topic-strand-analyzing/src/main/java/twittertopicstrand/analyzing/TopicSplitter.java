@@ -69,7 +69,7 @@ public class TopicSplitter {
 		return rVal;
 	}
 	
-	public static boolean subsetExists(int start, int end){
+	public static void addSubset(int start, int end, List<Pair<Integer,Integer>> pairs){
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
@@ -82,13 +82,10 @@ public class TopicSplitter {
 			to = firstIndexOfHours[end];
 		}
 		
-		to = to-1;
-		
-		if( end-start > minTopicLength ){
-			return true;
+		if( end-start > minTopicLength ) {
+			Pair<Integer, Integer> pair = new Pair<Integer, Integer>(start,end);
+			pairs.add(pair);
 		}
-		
-		return false;
 	}
 
 	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
@@ -151,10 +148,7 @@ public class TopicSplitter {
 				}else{
 					end = i-1;
 					if(end-start > minTopicLength){
-						if(subsetExists(start, end)){
-							Pair<Integer,Integer> tuple = new Pair<Integer,Integer>(start,end);
-							rVal.add(tuple);
-						}
+						addSubset(start, end, rVal);
 					}
 					start = 0; end = 0; state = 0;
 				}
@@ -164,10 +158,7 @@ public class TopicSplitter {
 		if(state ==2) {
 			end = filtered.length - 1;
 			if(end-start > minTopicLength){
-				if(subsetExists(start, end)){
-					Pair<Integer,Integer> tuple = new Pair<Integer,Integer>(start,end);
-					rVal.add(tuple);
-				}				
+				addSubset(start,end, rVal);
 			}
 		}
 		
