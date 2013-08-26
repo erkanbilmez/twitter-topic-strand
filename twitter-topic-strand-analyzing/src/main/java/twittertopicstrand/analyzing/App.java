@@ -53,11 +53,8 @@ public class App {
 	
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
-    	
-    	//analyzeActivity();
-    	
-    	convert();
-    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed";
+   	
+    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-subset";
     	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");

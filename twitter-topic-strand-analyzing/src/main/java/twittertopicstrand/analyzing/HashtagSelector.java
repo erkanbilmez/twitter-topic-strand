@@ -8,6 +8,7 @@ import java.util.Map;
 
 import twitter4j.LightStatus;
 import twittertopicstrand.sources.LightStatusSource;
+import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.MapOperations;
 
 public class HashtagSelector {
@@ -115,5 +116,23 @@ public class HashtagSelector {
 	
 	public static String[] getHashTags(String path) throws IOException{
 		return getMostTweetedNHashTags(path, mostNHashtags);
+	}
+	
+	public static String[] getFromDisk(String path) throws IOException{
+		String[] rVal;
+		
+		String text = FileOperations.readAllText(path);
+		
+		System.out.println(text);
+		
+		text = text.substring(1, text.length()-1);
+		String[] subs = text.split(",");
+		
+		rVal = new String[subs.length];
+		for(int i=0;i<subs.length;i++){
+			rVal[i] = subs[i].trim();
+		}
+
+		return rVal;
 	}
 }

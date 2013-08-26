@@ -81,6 +81,6 @@ public class LightStatusSource {
         
 		rVal = tempList.toArray(new LightStatus[tempList.size()]);
 		
-		return rVal;		
+		return rVal;
 	}
 }

@@ -57,8 +57,18 @@ public class DataAnalyzer{
 		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		LightStatus[] allLightStatuses = lsSource.getAll();
 		
-		String[] hashTags = HashtagSelector.getHashTags(allLightStatuses);
+		String[] hashTags = new String[1];
 		
+		String hashTagFilePath = "/home/twtuser/hashTags.txt";
+		
+		File hashTagFile = new File(hashTagFilePath);
+		if(hashTagFile.exists()){
+			hashTags = HashtagSelector.getFromDisk(hashTagFilePath);
+		}else{
+			hashTags = HashtagSelector.getHashTags(allLightStatuses);
+			FileOperations.writeFile(Arrays.toString(hashTags), hashTagFilePath);
+		}
+	
 		System.out.println("selected hashtags: " + Arrays.toString(hashTags));
 		
 		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
