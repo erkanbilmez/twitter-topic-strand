@@ -54,32 +54,16 @@ public class DataAnalyzer{
 			f.mkdir();
 		}
 		
-		LightStatusSource lsSource = new LightStatusSource(folderPath);
-		LightStatus[] allLightStatuses = lsSource.getAll();
-		
-		String[] hashTags = new String[1];
-		
-		String hashTagFilePath = "/home/twtuser/hashTags.txt";
-		
-		File hashTagFile = new File(hashTagFilePath);
-		if(hashTagFile.exists()){
-			hashTags = HashtagSelector.getFromDisk(hashTagFilePath);
-		}else{
-			hashTags = HashtagSelector.getHashTags(allLightStatuses);
-			FileOperations.writeFile(Arrays.toString(hashTags), hashTagFilePath);
-		}
-	
-		System.out.println("selected hashtags: " + Arrays.toString(hashTags));
-		
-		Map<String, List<LightStatus>> myMap = splitByHashTag(hashTags, allLightStatuses);
-		
-		for(Map.Entry<String, List<LightStatus>> entry : myMap.entrySet()) {
-			String hashTag = entry.getKey();
-			List<LightStatus> lstStatus = entry.getValue();
+		LightStatusSource ls = new LightStatusSource(folderPath);
+		do{
+			String hashTag = FileOperations.getOnlyFileName( ls.getCurrentFileName() );
 			
-			LightStatus[] statuses = lstStatus.toArray(new LightStatus[lstStatus.size()]);
-
-			List<LightStatus[]> topics = TopicSplitter.splitTopics(statuses);
+			System.out.println(hashTag);
+			
+			hashTag = hashTag.substring(0,hashTag.length()-4);
+			LightStatus[] chunk = ls.getChunk();
+		
+			List<LightStatus[]> topics = TopicSplitter.splitTopics(chunk);
 			
 			for(int i=0;i<topics.size();i++) {
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
@@ -92,7 +76,8 @@ public class DataAnalyzer{
 				FileOperations.writeFile(analyzer.getMainJson().toString(), fileName);
 				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
 			}
-		}		
+			
+		}while(ls.iterate());
 		
 		String indexFileName = outputDirectory + File.separatorChar + "@index" + ".json";
 		FileOperations.writeFile(indexJson.toString(), indexFileName);
