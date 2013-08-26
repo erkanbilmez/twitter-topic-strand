@@ -10,6 +10,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import twitter4j.LightStatus;
+import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.HourOperations;
 import twittertopicstrand.util.Pair;
 
@@ -79,32 +80,10 @@ public class TopicSplitter {
 			to = firstIndexOfHours[end];
 		}
 		
-		if( end-start > minTopicLength ) {
+		if( end - start > minTopicLength ) {
 			Pair<Integer, Integer> pair = new Pair<Integer, Integer>(start,end);
 			pairs.add(pair);
 		}
-	}
-
-	public static LightStatus[] getSubset(LightStatus[] statuses, int start, int end){
-		
-		LightStatus[] rVal = null;
-			
-		int from = firstIndexOfHours[start];
-		int to = firstIndexOfHours[end];
-		
-		rVal = Arrays.copyOfRange(statuses, from, to);
-		
-		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
-		
-		if(end-start != length){
-			System.out.println(Arrays.toString(Arrays.copyOfRange(firstIndexOfHours, start, end+1)));
-			System.out.println(Arrays.toString(Arrays.copyOfRange(arr, start,end+1)));
-		}
-		
-		System.out.println("startIndex: " + start + " endIndex: " + end + 
-				" expected length: " + (end-start) + " real length: " + length);
-	
-		return rVal;
 	}
 	
 	public static List<Pair<Integer, Integer>> getCoordinates(double[] filtered){
@@ -112,9 +91,9 @@ public class TopicSplitter {
 		
 		int state=0; //0 is not in list, 1 is in list waiting for high, 2 is in list definitely
 		int start=0;
-		int end=0;
 		
-		for( int i=0;i<filtered.length;i++ ) {
+		int i=0;
+		for( i=0;i<filtered.length;i++ ) {
 			double current = filtered[i];
 			if(state==0){
 				if(current>highThreshold){
@@ -124,7 +103,7 @@ public class TopicSplitter {
 					state = 1;
 					start = i;
 				}else{
-					start = 0; end = 0; state = 0;
+					start = 0; state = 0;
 				}
 			}else if(state == 1){
 				if(current>highThreshold){
@@ -132,7 +111,7 @@ public class TopicSplitter {
 				}else if(current > lowThreshold){
 					// do nothing, continue..
 				}else{
-					start = 0; end = 0; state = 0;
+					start = 0; state = 0;
 				}
 			}else if(state == 2){
 				if(current>highThreshold){
@@ -140,16 +119,14 @@ public class TopicSplitter {
 				}else if(current>lowThreshold){
 					// do nothing, continue..
 				}else{
-					end = i-1;
-					addSubset(start, end, rVal);
-					start = 0; end = 0; state = 0;
+					addSubset(start, i-1, rVal);
+					start = 0; state = 0;
 				}
 			}
 		}
 		
 		if( state == 2 ) {
-			end = filtered.length - 1;
-			addSubset(start,end, rVal);
+			addSubset(start, i-1, rVal);
 		}
 		
 		return rVal;	
@@ -161,11 +138,12 @@ public class TopicSplitter {
 		for(Pair<Integer,Integer> pair : pairs){
 			int left = pair.getLeft();
 			int right = pair.getRight();
+		
+			int from = firstIndexOfHours[left];
+			int to = firstIndexOfHours[right];
 			
-			LightStatus[] temp = getSubset(statuses, left, right);
-			
-			if(temp!= null && temp.length>0)
-				rVal.add(temp);
+			LightStatus[] temp = Arrays.copyOfRange(statuses, from, to+1);
+			rVal.add(temp);
 		}
 		
 		return rVal;
@@ -186,7 +164,7 @@ public class TopicSplitter {
 		
 		List<Pair<Integer,Integer>> pairs = getCoordinates(filtered);
 		rVal = getParts(statuses, pairs);
-		
+
 		return rVal;
 	}
 }
