@@ -121,10 +121,8 @@ public class HashtagSelector {
 	public static String[] getFromDisk(String path) throws IOException{
 		String[] rVal;
 		
-		String text = FileOperations.readAllText(path);
-		
-		System.out.println(text);
-		
+		String text = FileOperations.readAllText(path).trim();
+				
 		text = text.substring(1, text.length()-1);
 		String[] subs = text.split(",");
 		
