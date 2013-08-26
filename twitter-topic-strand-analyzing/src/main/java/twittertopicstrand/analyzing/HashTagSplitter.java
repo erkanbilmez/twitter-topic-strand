@@ -21,7 +21,7 @@ public class HashTagSplitter {
 				String[] intersection = HashTagRemover.getIntersection(current.hashTags, hashTags);
 				
 				for(int j=0;j<intersection.length;j++){
-					String destFile = dest + File.separator + intersection[i] + ".txt";
+					String destFile = dest + File.separator + intersection[j] + ".txt";
 					FileOperations.addLine(current.toJSONString(), destFile);
 				}
 			}
