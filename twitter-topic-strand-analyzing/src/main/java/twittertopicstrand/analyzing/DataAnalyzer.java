@@ -58,8 +58,6 @@ public class DataAnalyzer{
 		do{
 			String hashTag = FileOperations.getOnlyFileName( ls.getCurrentFileName() );
 			
-			System.out.println(hashTag);
-			
 			hashTag = hashTag.substring(0,hashTag.length()-4);
 			LightStatus[] chunk = ls.getChunk();
 		
