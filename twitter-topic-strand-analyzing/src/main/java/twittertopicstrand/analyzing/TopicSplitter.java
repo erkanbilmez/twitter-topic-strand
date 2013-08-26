@@ -28,10 +28,7 @@ public class TopicSplitter {
 		
 		DateTime start = new DateTime(statuses[0].createdAt);
 		DateTime end = new DateTime(statuses[statuses.length-1].createdAt);
-		
-		System.out.println(start);
-		System.out.println(end);
-		
+	
 		int length = HourOperations.getHourId(start, end) + 1;
 		
 		rVal = new int[length];
@@ -47,6 +44,14 @@ public class TopicSplitter {
 				firstIndexOfHours[hourId] = i;
 			}
 			rVal[hourId]++;
+		}
+		
+		System.out.println(Arrays.toString(firstIndexOfHours));
+		
+		for(int i=0;i<firstIndexOfHours.length;i++){
+			int index = firstIndexOfHours[i];
+			int hourId = HourOperations.getHourId(statuses[0].createdAt, statuses[index].createdAt);
+			System.out.println(i +","+hourId);
 		}
 	
 		return rVal;
@@ -105,6 +110,8 @@ public class TopicSplitter {
 		
 		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
 
+		
+		
 		System.out.println("startIndex: " + start + " endIndex: " + end + 
 				" expected length: " + (end-start) + " real length: " + length);
 	
