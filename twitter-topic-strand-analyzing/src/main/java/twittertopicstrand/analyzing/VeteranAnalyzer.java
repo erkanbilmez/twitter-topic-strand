@@ -19,9 +19,6 @@ public class VeteranAnalyzer {
 	
 	private HashSet<Long> getVeterans(ArrayList<HashMap<Long, Integer>> hourlyParticipants) throws Exception {
 		int numOfChunks = vetr_segcount;
-		
-		System.out.println("hourlyParticipants length: " + hourlyParticipants.size());
-		
 		int numOfItemsPerChunk = hourlyParticipants.size() / numOfChunks;
 		int minChunkCountForVeteran = (int) (numOfChunks * vetr_fraction);
 			

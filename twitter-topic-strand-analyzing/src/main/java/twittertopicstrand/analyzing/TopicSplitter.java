@@ -105,7 +105,8 @@ public class TopicSplitter {
 		
 		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
 
-		System.out.println("startIndex: " + start + "endIndex: " + end + "real length: " + length);
+		System.out.println("startIndex: " + start + " endIndex: " + end + 
+				" expected length: " + (end-start) + " real length: " + length);
 	
 		return rVal;
 	}
