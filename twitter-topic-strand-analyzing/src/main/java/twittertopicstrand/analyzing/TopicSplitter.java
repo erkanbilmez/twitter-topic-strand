@@ -29,6 +29,9 @@ public class TopicSplitter {
 		DateTime start = new DateTime(statuses[0].createdAt);
 		DateTime end = new DateTime(statuses[statuses.length-1].createdAt);
 		
+		System.out.println(start);
+		System.out.println(end);
+		
 		int length = HourOperations.getHourId(start, end) + 1;
 		
 		rVal = new int[length];
