@@ -14,46 +14,33 @@ import twittertopicstrand.util.HourOperations;
 import twittertopicstrand.util.Pair;
 
 public class ActivityAnalyzer {
-	public static void analyzeAll(String path, String[] arr) throws IOException{
-		LightStatusSource src = new LightStatusSource(path);
-		LightStatus[] statuses = src.getAll();
+	static void analyze(String folderPath) throws IOException {
+		LightStatusSource lsSource = new LightStatusSource(folderPath); 
 		
-		for(int i=0;i<arr.length;i++){
-			analyze(statuses, arr[i]);
-		}
-	}
-	
-	private static void analyze(LightStatus[] statuses, String hashTag) throws IOException{
-	
-		List<LightStatus> temp = new ArrayList<LightStatus>();
-		for(int i=0;i<statuses.length;i++){
-			if( Arrays.asList( statuses[i].hashTags ).contains(hashTag)){
-				temp.add(statuses[i]);
-			}
-		}
-		
-		LightStatus[] subset = temp.toArray(new LightStatus[temp.size()]);
-	
-		DateTime start = null;
-		
-		if(subset.length>0)
-			start = new DateTime(subset[0].createdAt);
-		
-		int[] arr = TopicSplitter.createArray(subset);
-		
-		if( arr.length < TopicSplitter.minTopicLength )
-			return;
-		
-		double[] filtered = TopicSplitter.SumPastNFilter(arr);
-		
-		List<Pair<Integer,Integer>> pairs = TopicSplitter.getCoordinates(filtered);
+		do{
+			LightStatus[] subset = lsSource.getChunk();
+			String hashTag = FileOperations.getOnlyFileName(lsSource.getCurrentFileName());
 			
-		String line = "createPng('" + hashTag + "'," + 
-					gettRArrFromArray(arr) + "," + 
-						start.getHourOfDay() + "," + 
-							getRArrFromPairs(pairs) + ")";
-		
-		FileOperations.addLine(line, "/home/twtuser/createPng.r");
+			DateTime start = new DateTime(subset[0].createdAt);
+			
+			int[] arr = TopicSplitter.createArray(subset);
+			
+			if( arr.length < TopicSplitter.minTopicLength )
+				return;
+			
+			double[] filtered = TopicSplitter.SumPastNFilter(arr);
+			
+			List<Pair<Integer,Integer>> pairs = TopicSplitter.getCoordinates(filtered);
+				
+			String line = "createPng('" + hashTag + "'," + 
+						gettRArrFromArray(arr) + "," + 
+							start.getHourOfDay() + "," + 
+								getRArrFromPairs(pairs) + ")";
+			
+			FileOperations.addLine(line, "/home/twtuser/createPng.r");
+			
+			
+		}while(lsSource.iterate());
 	}
 	
 	private static String gettRArrFromArray(int[] arr){

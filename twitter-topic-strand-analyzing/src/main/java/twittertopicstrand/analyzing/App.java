@@ -55,21 +55,12 @@ public class App {
     	HashTagRemover.convert(src, dest, arr);
 	}
 	
-	public static void analyzeActivity() throws IOException{
-		String path = "/home/twtuser/lightstatus-subset-removed";
-		String[] arr = new String[] { "direngeziparkı", "direngeziparki", "occupygezi", 
-    			"direnankara", "redhack", "direngezi", "direngaziparki", 
-    			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
-    			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
-    			"tayyipistifa", "cevapver" };
-		ActivityAnalyzer.analyzeAll(path, arr);
-	}
-	
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
-
+  	
     	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	//DataAnalyzer.analyze(lightStatusSourceDir);
+    	ActivityAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
