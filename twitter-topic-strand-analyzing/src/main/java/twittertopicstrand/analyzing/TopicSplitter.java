@@ -50,8 +50,10 @@ public class TopicSplitter {
 		
 		for(int i=0;i<firstIndexOfHours.length;i++){
 			int index = firstIndexOfHours[i];
-			int hourId = HourOperations.getHourId(statuses[0].createdAt, statuses[index].createdAt);
-			System.out.println(i +","+hourId);
+			if(index != -1){
+				int hourId = HourOperations.getHourId(statuses[0].createdAt, statuses[index].createdAt);
+				System.out.println(i +","+hourId);
+			}
 		}
 	
 		return rVal;
