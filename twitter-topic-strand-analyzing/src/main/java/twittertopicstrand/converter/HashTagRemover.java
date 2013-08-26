@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,23 @@ public class HashTagRemover {
 			}
 		}
 		return false;
+	}
+	
+	public static String[] getIntersection(String[] arr1, String[] arr2){
+		String[] rVal;
+		List<String> rValList = new ArrayList<String>(200);
+		
+		for(int i=0;i<arr1.length;i++){
+			for(int j=0;j<arr2.length;j++){
+				if(arr1[i].equals(arr2[j])){
+					rValList.add(arr1[i]);
+				}
+			}
+		}
+		
+		rVal = rValList.toArray(new String[rValList.size()]);
+		
+		return rVal;		
 	}
 	
 	public static void convertFile(String sourceFile, String destFile, String[] hashTags) throws IOException{

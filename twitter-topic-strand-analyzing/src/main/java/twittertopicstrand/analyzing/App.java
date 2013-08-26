@@ -13,6 +13,17 @@ import twittertopicstrand.sources.LightStatusSource;
 
 public class App {
 		
+	public static void split() throws IOException{
+		String src = "/home/twtuser/lightstatuses-removed";
+    	String dest = "/home/twtuser/lightstatuses-removed-splitted";
+    	
+    	String[] hashTags = HashtagSelector.getFromDisk("/home/twtuser/hashTags.txt");
+    	
+    	System.out.println(Arrays.toString(hashTags));
+    	
+    	HashTagSplitter.convert(src, dest, hashTags);
+	}
+	
 	public static void convert() throws IOException{
     	String src = "/home/twtuser/reduced-tweets";
     	String dest = "/home/twtuser/lightstatuses";
@@ -54,8 +65,9 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
    	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-subset";
-    	DataAnalyzer.analyze(lightStatusSourceDir);
+    	split();
+//    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-subset";
+//    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
