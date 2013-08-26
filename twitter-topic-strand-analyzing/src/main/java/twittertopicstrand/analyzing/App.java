@@ -6,10 +6,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.joda.time.DateTime;
+
 import twitter4j.internal.org.json.JSONException;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.converter.HashTagRemover;
 import twittertopicstrand.sources.LightStatusSource;
+import twittertopicstrand.util.HourOperations;
 
 public class App {
 		
@@ -64,7 +67,7 @@ public class App {
 	
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
-   	
+   	    	
     	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
     	DataAnalyzer.analyze(lightStatusSourceDir);
     	

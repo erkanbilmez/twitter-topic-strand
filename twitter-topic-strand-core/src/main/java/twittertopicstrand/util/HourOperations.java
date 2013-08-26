@@ -16,7 +16,8 @@ public class HourOperations {
 		start = onlyHour(start);
 		dt = onlyHour(dt);
 		Duration d = new Duration(start, dt);
-		return (int) d.getMillis() / (1000 * 60 * 60);
+		
+		return (int) (d.getMillis() / (1000 * 60 * 60));
 	}
 	
 	public static DateTime getDateTime(String str){
