@@ -165,9 +165,9 @@ public class TopicSplitter {
 			int left = pair.getLeft();
 			int right = pair.getRight();
 			
-			LightStatus[] temp = Arrays.copyOfRange(statuses, left, right);
+			LightStatus[] temp = getSubset(statuses, left, right);
 			
-			if(temp.length>0)
+			if(temp!= null && temp.length>0)
 				rVal.add(temp);
 		}
 		
