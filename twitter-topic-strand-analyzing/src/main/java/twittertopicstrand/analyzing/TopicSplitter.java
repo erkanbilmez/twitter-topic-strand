@@ -45,16 +45,6 @@ public class TopicSplitter {
 			}
 			rVal[hourId]++;
 		}
-		
-		System.out.println(Arrays.toString(firstIndexOfHours));
-		
-		for(int i=0;i<firstIndexOfHours.length;i++){
-			int index = firstIndexOfHours[i];
-			if(index != -1){
-				int hourId = HourOperations.getHourId(statuses[0].createdAt, statuses[index].createdAt);
-				System.out.println(i +","+hourId);
-			}
-		}
 	
 		return rVal;
 	}
@@ -102,17 +92,14 @@ public class TopicSplitter {
 		int from = firstIndexOfHours[start];
 		int to = firstIndexOfHours[end];
 		
-		if(from == -1 || to == -1) {
-			System.out.println("from: " + from);
-			System.out.println("to: " + to);
-			System.out.println("bir index hatasi olmus olabilir.");
-		} 
-		
 		rVal = Arrays.copyOfRange(statuses, from, to);
 		
 		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
-
 		
+		if(end-start != length){
+			System.out.println(Arrays.toString(Arrays.copyOfRange(firstIndexOfHours, start, end)));
+			System.out.println(Arrays.toString(Arrays.copyOfRange(arr, start,end)));
+		}
 		
 		System.out.println("startIndex: " + start + " endIndex: " + end + 
 				" expected length: " + (end-start) + " real length: " + length);
@@ -184,11 +171,13 @@ public class TopicSplitter {
 		return rVal;
 	}
 	
+	static int[] arr;
+	
 	public static List<LightStatus[]> splitTopics(LightStatus[] statuses) {
 		
 		List<LightStatus[]> rVal;
 		
-		int[] arr = createArray(statuses);
+		arr = createArray(statuses);
 		
 		if( arr.length < minTopicLength )
 			return new ArrayList<LightStatus[]>();
