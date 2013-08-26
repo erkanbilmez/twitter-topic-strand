@@ -56,15 +56,19 @@ public class ActivityAnalyzer {
 	
 	private static String getRArrFromPairs(List<Pair<Integer,Integer>> pairs){
 		String rVal = "c(";
-		
-		int i=0;
-		for(i=0;i<pairs.size()-1;i++){
+	
+		if(pairs == null || pairs.size() == 0) {
+			int i=0;
+			for(i=0;i<pairs.size()-1;i++){
+				Pair<Integer,Integer> pair = pairs.get(i);
+				rVal += pair.getLeft() + "," + pair.getRight() + ",";
+			}
+			
 			Pair<Integer,Integer> pair = pairs.get(i);
-			rVal += pair.getLeft() + "," + pair.getRight() + ",";
+			rVal += pair.getLeft() + "," + pair.getRight() + ")";
+		}else{
+			return "c()";
 		}
-		
-		Pair<Integer,Integer> pair = pairs.get(i);
-		rVal += pair.getLeft() + "," + pair.getRight() + ")";
 		
 		return rVal;
 	}
