@@ -68,7 +68,7 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
 
-    	String lightStatusSourceDir = "/home/twtuser/lighstatuses-removed-splitted/";
+    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
     	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
