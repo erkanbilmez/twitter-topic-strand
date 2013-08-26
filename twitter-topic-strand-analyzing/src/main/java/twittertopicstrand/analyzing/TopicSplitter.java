@@ -97,8 +97,8 @@ public class TopicSplitter {
 		int length = HourOperations.getHourId(rVal[0].createdAt, rVal[rVal.length-1].createdAt) + 1;
 		
 		if(end-start != length){
-			System.out.println(Arrays.toString(Arrays.copyOfRange(firstIndexOfHours, start, end)));
-			System.out.println(Arrays.toString(Arrays.copyOfRange(arr, start,end)));
+			System.out.println(Arrays.toString(Arrays.copyOfRange(firstIndexOfHours, start, end+1)));
+			System.out.println(Arrays.toString(Arrays.copyOfRange(arr, start,end+1)));
 		}
 		
 		System.out.println("startIndex: " + start + " endIndex: " + end + 
