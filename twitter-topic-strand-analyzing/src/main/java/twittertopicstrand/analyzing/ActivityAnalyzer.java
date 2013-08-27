@@ -20,6 +20,7 @@ public class ActivityAnalyzer {
 		do{
 			LightStatus[] subset = lsSource.getChunk();
 			String hashTag = FileOperations.getOnlyFileName(lsSource.getCurrentFileName());
+			hashTag = hashTag.substring(0, hashTag.length()-4);
 			
 			DateTime start = new DateTime(subset[0].createdAt);
 			
