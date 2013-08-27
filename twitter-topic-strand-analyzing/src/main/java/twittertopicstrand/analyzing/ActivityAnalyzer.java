@@ -33,13 +33,12 @@ public class ActivityAnalyzer {
 			
 			List<Pair<Integer,Integer>> pairs = TopicSplitter.getCoordinates(filtered);
 				
-			String line = "createPng('" + hashTag + "'," + 
+			String line = "createPdf('" + hashTag + "'," + 
 						gettRArrFromArray(arr) + "," + 
 							start.getHourOfDay() + "," + 
 								getRArrFromPairs(pairs) + ")";
 			
-			FileOperations.addLine(line, "/home/twtuser/createPng.r");
-			
+			FileOperations.addLine(line, "/home/twtuser/createPdf.r");
 			
 		}while(lsSource.iterate());
 	}
