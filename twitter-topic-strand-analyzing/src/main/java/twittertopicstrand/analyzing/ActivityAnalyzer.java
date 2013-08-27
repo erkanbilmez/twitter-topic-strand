@@ -57,7 +57,7 @@ public class ActivityAnalyzer {
 	private static String getRArrFromPairs(List<Pair<Integer,Integer>> pairs){
 		String rVal = "c(";
 	
-		if(pairs == null || pairs.size() == 0) {
+		if( pairs != null && pairs.size() > 0 ) {
 			int i=0;
 			for(i=0;i<pairs.size()-1;i++){
 				Pair<Integer,Integer> pair = pairs.get(i);
