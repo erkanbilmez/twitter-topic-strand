@@ -28,6 +28,7 @@ public class TopicAnalyzer {
 		      
 	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
 	HeroAnalyzer heroAnalyzer = new HeroAnalyzer();
+	RetweetAnalyzer retweetAnalyzer = new RetweetAnalyzer();
 	
 	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws Throwable {
 		this.topicIdentifier = topicIdentifier;
@@ -63,6 +64,7 @@ public class TopicAnalyzer {
 		
 		this.veteranAnalyzer.analyze(hourlyParticipants, allParticipants);
 		this.heroAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
+		this.retweetAnalyzer.analyze(this.statuses);
 		
 		this.initJSONObject();
 	}
@@ -144,6 +146,8 @@ public class TopicAnalyzer {
 		mainJson.put("ParticipantSummary", participantSummary);
 		mainJson.put("VeteranSummary", veteranSummary);
 		mainJson.put("HeroSummary", heroSummary);
+		
+		
 		
 		// indexJson
 		

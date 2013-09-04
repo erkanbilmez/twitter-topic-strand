@@ -7,13 +7,15 @@ import twitter4j.internal.json.StatusJSONImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class LightStatus implements Comparable<LightStatus>{
+public class LightStatus implements Comparable<LightStatus> {
+	
 	public long id;
 	public long userId;
 	public Date createdAt;
 	public long retweetedStatusId;
 	public long retweetedStatusUserId;
 	public String[] hashTags;
+	public String text;
 	
 	public String toJSONString(){
 		
@@ -43,4 +45,14 @@ public class LightStatus implements Comparable<LightStatus>{
 	public int compareTo(LightStatus arg0) {
 		return this.createdAt.compareTo(arg0.createdAt);
 	}
+	
+    @Override
+    public boolean equals(Object other){
+    	if(other == null)
+    		return false;
+    	
+    	LightStatus o = (LightStatus) other;
+    	
+    	return (this.id == o.id);
+    }
 }

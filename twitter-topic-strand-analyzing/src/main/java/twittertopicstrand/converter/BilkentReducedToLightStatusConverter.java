@@ -13,9 +13,7 @@ import twittertopicstrand.util.HourOperations;
 
 public class BilkentReducedToLightStatusConverter {
 	
-
 	public static void convertFile(String sourceFile, String destFile, boolean onlyHashTaggeds) throws IOException{
-		
 		List<String> lines = FileOperations.readFile(sourceFile);
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFile) , true));
@@ -51,6 +49,7 @@ public class BilkentReducedToLightStatusConverter {
 		ls.retweetedStatusId = parts[3].isEmpty() ? -1l : Long.valueOf(parts[3]);
 		ls.retweetedStatusUserId = parts[4].isEmpty() ? -1l : Long.valueOf(parts[4]);
 		ls.hashTags = parts[7].isEmpty() ? new String[] {} : parts[7].split(",");
+		ls.text = parts[8];
 		
 		return ls;
 	}
@@ -78,6 +77,4 @@ public class BilkentReducedToLightStatusConverter {
 			f.delete();
 		}
 	}
-	
-
 }

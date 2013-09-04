@@ -9,58 +9,41 @@ import java.util.HashSet;
 import org.joda.time.DateTime;
 
 import twitter4j.internal.org.json.JSONException;
+import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.converter.HashTagRemover;
 import twittertopicstrand.sources.LightStatusSource;
 import twittertopicstrand.util.HourOperations;
 
 public class App {
-		
-	public static void split() throws IOException{
-		String src = "/home/twtuser/lightstatuses-removed";
-    	String dest = "/home/twtuser/lightstatuses-removed-splitted";
-    	
-    	String[] hashTags = HashtagSelector.getFromDisk("/home/twtuser/hashTags.txt");
-    	
-    	System.out.println(Arrays.toString(hashTags));
-    	
-    	HashTagSplitter.convert(src, dest, hashTags);
-	}
 	
 	public static void convert() throws IOException{
     	String src = "/home/twtuser/reduced-tweets";
     	String dest = "/home/twtuser/lightstatuses";
-    	String finalDest = "/home/twtuser/lightstatuses-removed";
+    	String finalDest = "/home/twtuser/lightstatuses-removed-splitted";
     	
     	BilkentReducedToLightStatusConverter.convert(src, dest, true);
     	
-    	String[] hashTags = HashtagSelector.getHashTags(dest);
+    	String[] hashTags = HashtagSelector.getFromDisk("/home/twtuser/hashTags.txt");
     	
-    	System.out.println(Arrays.toString(hashTags));
-    
-    	HashTagRemover.convert(dest, finalDest, hashTags);
-	}
-	
-	public static void remove() throws IOException {
-		String src = "/home/twtuser/lightstatus-subset";
-		String dest = "/home/twtuser/lightstatus-subset-removed";
-		
-		String[] arr = new String[] 
-    			{ "direngeziparkı", "direngeziparki", "occupygezi", 
-    			"direnankara", "redhack", "direngezi", "direngaziparki", 
-    			"direngeziseninleyiz", "direnizmir", "sesvertürkiyebuülkesahipsizdeğil", 
-    			"direnbesiktas", "bubirsivildirenis", "occupyturkey", 
-    			"tayyipistifa", "cevapver" };
-    
-    	HashTagRemover.convert(src, dest, arr);
+    	HashTagSplitter.convert(dest, finalDest, hashTags);
 	}
 	
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
+    	
+    	convert();
   	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
+//    	this works..
+    	
+//    	JSONObject mainJson = new JSONObject();
+//    	mainJson.put("Hashtag", "abc"); 
+//    	mainJson.put("TweetCount", "def");
+//    	System.out.println(mainJson);
+    	
+    	
+    	//String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
     	//DataAnalyzer.analyze(lightStatusSourceDir);
-    	ActivityAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
