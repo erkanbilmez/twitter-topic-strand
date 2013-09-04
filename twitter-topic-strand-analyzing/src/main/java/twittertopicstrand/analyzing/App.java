@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 import org.joda.time.DateTime;
 
+import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
@@ -32,18 +33,8 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
     	
-    	convert();
-  	
-//    	this works..
-    	
-//    	JSONObject mainJson = new JSONObject();
-//    	mainJson.put("Hashtag", "abc"); 
-//    	mainJson.put("TweetCount", "def");
-//    	System.out.println(mainJson);
-    	
-    	
-    	//String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
-    	//DataAnalyzer.analyze(lightStatusSourceDir);
+    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted-subset";
+    	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import twitter4j.LightStatus;
 import twitter4j.internal.org.json.JSONArray;
+import twitter4j.internal.org.json.JSONException;
+import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.util.MapOperations;
 
 public class RetweetAnalyzer {
@@ -15,20 +17,26 @@ public class RetweetAnalyzer {
 	
 	private static int n = 3;
 	
-	public void analyze(LightStatus[] statuses) {
-		
-		List<Long> rValList = new ArrayList<Long>();
+	public void analyze(LightStatus[] statuses) throws JSONException {
 		
 		HashMap<Long, Integer> retweetCounts = new HashMap<Long, Integer>();
+		HashMap<Long, JSONObject> retweetInfos = new HashMap<Long, JSONObject>();
 		
 		for(int i=0;i<statuses.length;i++) {
 			LightStatus current = statuses[i];
 			
 			if(current.retweetedStatusId != -1) {
-				int count = retweetCounts.containsKey(current) ? 
-						retweetCounts.get(current) : 0;
+				int count = retweetCounts.containsKey(current.retweetedStatusId) ? 
+						retweetCounts.get(current.retweetedStatusId) : 0;
 						
-				retweetCounts.put(current.id, count);
+				if(count < 1){
+					JSONObject tweet = new JSONObject();
+			    	tweet.put("text", current.text.substring(3)); 
+			    	tweet.put("id", current.retweetedStatusId);
+			    	tweet.put("userId", current.retweetedStatusUserId);
+			    	
+			    	retweetInfos.put(current.retweetedStatusId, tweet);
+				} 
 			}
 		}
 		
@@ -37,15 +45,14 @@ public class RetweetAnalyzer {
 		
 		for (Map.Entry<Long, Integer> entry : sortedMap.entrySet()) {
 			Long temp = entry.getKey();
-			rValList.add(temp);
+			
+			mostRetweetedLightStatuses.put(retweetInfos.get(temp));
+			
 			i++;
 			
 			if(i+1 > n) {
 				break;
 			}
-		}
-
-		
-		
+		}	
 	}
 }

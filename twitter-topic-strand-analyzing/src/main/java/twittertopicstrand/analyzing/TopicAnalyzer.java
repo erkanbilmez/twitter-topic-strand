@@ -147,7 +147,7 @@ public class TopicAnalyzer {
 		mainJson.put("VeteranSummary", veteranSummary);
 		mainJson.put("HeroSummary", heroSummary);
 		
-		
+		mainJson.put("MostRetweetedTweets", this.retweetAnalyzer.mostRetweetedLightStatuses);
 		
 		// indexJson
 		
