@@ -37,6 +37,8 @@ public class RetweetAnalyzer {
 			    	
 			    	retweetInfos.put(current.retweetedStatusId, tweet);
 				} 
+				
+				retweetCounts.put(current.retweetedStatusId, count+1);
 			}
 		}
 		
