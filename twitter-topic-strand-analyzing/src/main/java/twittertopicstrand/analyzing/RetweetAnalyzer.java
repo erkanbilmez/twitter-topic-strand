@@ -19,6 +19,8 @@ public class RetweetAnalyzer {
 	
 	public void analyze(LightStatus[] statuses) throws JSONException {
 		
+		this.mostRetweetedLightStatuses = new JSONArray(); 
+		
 		HashMap<Long, Integer> retweetCounts = new HashMap<Long, Integer>();
 		HashMap<Long, JSONObject> retweetInfos = new HashMap<Long, JSONObject>();
 		
