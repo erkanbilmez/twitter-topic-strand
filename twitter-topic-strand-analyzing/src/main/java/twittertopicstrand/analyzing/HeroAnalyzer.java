@@ -9,7 +9,7 @@ import twitter4j.LightStatus;
 
 public class HeroAnalyzer {
 	
-	double kStandartDeviation = 3;
+	double kStandartDeviation = 3.3;
 	
 	public int heroCount;
 	public int[] heroCountsByHour;
