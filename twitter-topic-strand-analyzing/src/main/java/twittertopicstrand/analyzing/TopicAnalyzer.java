@@ -158,6 +158,8 @@ public class TopicAnalyzer {
 		indexJson.put("HeroCount", this.heroAnalyzer.heroCount );
 		indexJson.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		indexJson.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));
+		indexJson.put("TweetSummary", tweetVolumeSummary);
+		indexJson.put("ParticipantSummary", participantSummary);
 	}
 	
 	public JSONObject getMainJson() {		

@@ -9,7 +9,7 @@ import twitter4j.LightStatus;
 
 public class HeroAnalyzer {
 	
-	int hero_ratio = 10;
+	double kStandartDeviation = 2;
 	
 	public int heroCount;
 	public int[] heroCountsByHour;
@@ -18,8 +18,7 @@ public class HeroAnalyzer {
 	private HashSet<Long> getHeroes(ArrayList<HashMap<Long, Integer>> participants, HashSet<Long> allParticipants, LightStatus[] statuses) {
 		HashSet<Long> rVal = new HashSet<Long>();
 
-		int averageTweetCount = statuses.length / allParticipants.size();
-		int minTweetForHero = averageTweetCount * hero_ratio;
+		double mean = statuses.length / allParticipants.size();
 		
 		HashMap<Long, Integer> tweetCounts = new HashMap<Long, Integer>();
 		
@@ -28,6 +27,16 @@ public class HeroAnalyzer {
 			int count = tweetCounts.containsKey(userId) ? tweetCounts.get(userId) : 0;
 			tweetCounts.put(userId, count + 1);
 		}
+		
+		double stdDeviation = 0;
+		
+		for(Map.Entry<Long,Integer> entry:tweetCounts.entrySet()){
+			int temp = entry.getValue();
+			stdDeviation += Math.pow(mean - temp, 2);
+		} 
+		
+		stdDeviation = Math.sqrt(stdDeviation);
+		double minTweetForHero = mean + kStandartDeviation * stdDeviation;
 		
 		for(Map.Entry<Long,Integer> entry:tweetCounts.entrySet()){
 			if(entry.getValue() >= minTweetForHero){
