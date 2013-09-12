@@ -18,7 +18,7 @@ public class HeroAnalyzer {
 	private HashSet<Long> getHeroes(ArrayList<HashMap<Long, Integer>> participants, HashSet<Long> allParticipants, LightStatus[] statuses) {
 		HashSet<Long> rVal = new HashSet<Long>();
 
-		double mean = statuses.length / allParticipants.size();
+		double mean = (double)statuses.length / (double)allParticipants.size();
 		
 		HashMap<Long, Integer> tweetCounts = new HashMap<Long, Integer>();
 		
@@ -31,7 +31,7 @@ public class HeroAnalyzer {
 		double stdDeviation = 0;
 		
 		for(Map.Entry<Long,Integer> entry:tweetCounts.entrySet()){
-			int temp = entry.getValue();
+			double temp = entry.getValue();
 			stdDeviation += Math.pow(mean - temp, 2);
 		} 
 		
