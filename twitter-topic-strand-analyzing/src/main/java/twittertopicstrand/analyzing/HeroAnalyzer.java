@@ -20,6 +20,10 @@ public class HeroAnalyzer {
 
 		double mean = (double)statuses.length / (double)allParticipants.size();
 		
+		System.out.println("statuses length: " + statuses.length);
+		System.out.println("allParticipants size: " + allParticipants.size());
+		System.out.println("mean: " + mean);
+		
 		HashMap<Long, Integer> tweetCounts = new HashMap<Long, Integer>();
 		
 		for(int i=0;i<statuses.length;i++){
@@ -30,19 +34,31 @@ public class HeroAnalyzer {
 		
 		double stdDeviation = 0;
 		
+		String tempStr = "c(";
+		
 		for(Map.Entry<Long,Integer> entry:tweetCounts.entrySet()){
 			double temp = entry.getValue();
+			tempStr += temp + ",";
 			stdDeviation += Math.pow(mean - temp, 2);
 		} 
 		
+		System.out.println(tempStr);
+		
 		stdDeviation = Math.sqrt(stdDeviation);
+		
+		System.out.println("stdDeviation: " + stdDeviation );
+		
 		double minTweetForHero = mean + kStandartDeviation * stdDeviation;
+		
+		System.out.println("minTweetForHero: " + minTweetForHero );
 		
 		for(Map.Entry<Long,Integer> entry:tweetCounts.entrySet()){
 			if(entry.getValue() >= minTweetForHero){
 				rVal.add(entry.getKey());
 			}
 		}
+		
+		System.out.println("num of heroes: " + rVal.size());
 		
 		return rVal;
 	}
