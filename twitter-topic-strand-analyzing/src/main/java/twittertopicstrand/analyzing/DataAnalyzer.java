@@ -22,7 +22,7 @@ import com.google.gson.GsonBuilder;
 
 public class DataAnalyzer{
 	
-  	static String outputDirectory = "/home/twtuser/outputs/";
+  	static String outputDirectory = "/home/mll2/Desktop/outputs/";
   	static JSONObject indexJson = new JSONObject();
 		
   	private static Map<String, List<LightStatus>> splitByHashTag(String[] selectedHashTags, LightStatus[] statuses){
@@ -58,7 +58,7 @@ public class DataAnalyzer{
 		do{
 			String hashTag = FileOperations.getOnlyFileName( ls.getCurrentFileName() );
 			
-			hashTag = hashTag.substring(0,hashTag.length()-4);
+			hashTag = hashTag.substring(0, hashTag.length() - 4 );
 			LightStatus[] chunk = ls.getChunk();
 		
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(chunk);
@@ -67,6 +67,7 @@ public class DataAnalyzer{
 				String topicIdentifier = hashTag + "-" + String.valueOf(i);
 				
 				LightStatus[] topic = topics.get(i);
+				
 				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
 				
 				String fileName = outputDirectory + File.separatorChar + topicIdentifier + ".json";

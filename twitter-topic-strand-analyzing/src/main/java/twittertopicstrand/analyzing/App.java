@@ -14,11 +14,12 @@ import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.converter.BilkentReducedToLightStatusConverter;
 import twittertopicstrand.converter.HashTagRemover;
 import twittertopicstrand.sources.LightStatusSource;
+import twittertopicstrand.util.FileOperations;
 import twittertopicstrand.util.HourOperations;
 
 public class App {
 	
-	public static void convert() throws IOException{
+	public static void convert() throws IOException {
     	String src = "/home/twtuser/reduced-tweets";
     	String dest = "/home/twtuser/lightstatuses";
     	String finalDest = "/home/twtuser/lightstatuses-removed-splitted";
@@ -33,9 +34,10 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	System.out.println("hello ..");
     	
-    	String lightStatusSourceDir = "/home/twtuser/lightstatuses-removed-splitted";
+    	String lightStatusSourceDir = "/home/mll2/Desktop/lightstatuses-removed-splitted-subset";
     	DataAnalyzer.analyze(lightStatusSourceDir);
     	
     	System.out.println("bye .. ");
     }
+    
 }

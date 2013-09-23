@@ -28,6 +28,8 @@ public class TopicAnalyzer {
 		      
 	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
 	HeroAnalyzer heroAnalyzer = new HeroAnalyzer();
+	MissionaryAnalyzer missionaryAnalyzer = new MissionaryAnalyzer();
+	ApostleAnalyzer apostleAnalyzer = new ApostleAnalyzer();
 	RetweetAnalyzer retweetAnalyzer = new RetweetAnalyzer();
 	
 	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws Throwable {
@@ -64,6 +66,8 @@ public class TopicAnalyzer {
 		
 		this.veteranAnalyzer.analyze(hourlyParticipants, allParticipants);
 		this.heroAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
+		this.apostleAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
+		this.missionaryAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		this.retweetAnalyzer.analyze(this.statuses);
 		
 		this.initJSONObject();
@@ -122,11 +126,13 @@ public class TopicAnalyzer {
 		mainJson.put("ParticipantCount", this.allParticipants.size() );
 		mainJson.put("VeteranCount", this.veteranAnalyzer.veteranCount );
 		mainJson.put("HeroCount", this.heroAnalyzer.heroCount );
+		mainJson.put("MissionaryCount", this.missionaryAnalyzer.missionaryCount );
 		mainJson.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		mainJson.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		
 		mainJson.put("Veterans", this.veteranAnalyzer.veterans);
 		mainJson.put("Heroes", this.heroAnalyzer.heroes);
+		mainJson.put("Missionaries", this.missionaryAnalyzer.missionaries);
 		
 		int[] tweetVolume = getTweetVolumes();
 		int[] tweetVolumeSummary = getSummary(tweetVolume);
@@ -136,16 +142,19 @@ public class TopicAnalyzer {
 		
 		int[] veteranSummary = getSummary(veteranAnalyzer.veteranCountsByHour);
 		int[] heroSummary = getSummary(heroAnalyzer.heroCountsByHour);
+		int[] missionarySummary = getSummary(missionaryAnalyzer.missionaryCountsByHour);
 		
 		mainJson.put("TweetVolume", tweetVolume);
 		mainJson.put("ParticipantVolume", participantVolume);
 		mainJson.put("VeteranVolume", veteranAnalyzer.veteranCountsByHour);
 		mainJson.put("HeroVolume", heroAnalyzer.heroCountsByHour);
+		mainJson.put("MissionaryVolume", missionaryAnalyzer.missionaryCountsByHour);
 		
 		mainJson.put("TweetSummary", tweetVolumeSummary);
 		mainJson.put("ParticipantSummary", participantSummary);
 		mainJson.put("VeteranSummary", veteranSummary);
 		mainJson.put("HeroSummary", heroSummary);
+		mainJson.put("MissionarySummary", missionarySummary);
 		
 		mainJson.put("MostRetweetedTweets", this.retweetAnalyzer.mostRetweetedLightStatuses);
 		
@@ -156,6 +165,7 @@ public class TopicAnalyzer {
 		indexJson.put("ParticipantCount", this.allParticipants.size() );
 		indexJson.put("VeteranCount", this.veteranAnalyzer.veteranCount );
 		indexJson.put("HeroCount", this.heroAnalyzer.heroCount );
+		indexJson.put("MissionaryCount", this.missionaryAnalyzer.missionaryCount );
 		indexJson.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		indexJson.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		indexJson.put("TweetSummary", tweetVolumeSummary);
