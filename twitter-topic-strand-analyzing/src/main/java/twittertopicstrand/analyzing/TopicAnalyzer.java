@@ -66,8 +66,8 @@ public class TopicAnalyzer {
 		
 		this.veteranAnalyzer.analyze(hourlyParticipants, allParticipants);
 		this.heroAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
-		this.apostleAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		this.missionaryAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
+		//this.apostleAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		this.retweetAnalyzer.analyze(this.statuses);
 		
 		this.initJSONObject();

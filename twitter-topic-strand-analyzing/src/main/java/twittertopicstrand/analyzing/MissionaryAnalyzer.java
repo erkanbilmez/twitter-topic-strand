@@ -2,10 +2,12 @@ package twittertopicstrand.analyzing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import twitter4j.LightStatus;
 import twittertopicstrand.util.HourOperations;
@@ -19,27 +21,17 @@ public class MissionaryAnalyzer {
 	public int[] missionaryCountsByHour;
 	public HashSet<Long> missionaries;
 	
-	public void processThisUser(LightStatus[] statuses, HashSet<Long> follows, 
-														HashMap<Long, Double> scores, int index){		
-		ArrayList<Long> scorers = new ArrayList<Long>();
+	public boolean hasDuplicateValue(HashSet hs1, Set hs2) {
 		
-		for(int i=index-1;i>-1;i--){	
-			if ( HourOperations.getHourId(statuses[i].createdAt, statuses[index].createdAt) > windowSize) {
-				break;
-			}
-						
-			if (follows != null && follows.contains( statuses[i].userId )) {
-				scorers.add(statuses[i].userId);
-			}
-		}	
-		
-		if(scorers.size() > 0) {		
-			double score = 1.0 / scorers.size();			
-			for(Long scorerId: scorers){
-				double old = scores.containsKey(scorerId) ? scores.get(scorerId) : 0.0;
-				scores.put(scorerId, old + score);
-			}
-		}
+	    if (hs2.size() == 0) {
+	        return false;
+	    }
+	    for (Object obj : hs1) {
+	        if (hs2.contains(obj)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 	
 	public HashSet<Long> getMissionaries(ArrayList<HashMap<Long, Integer>> participants, 
@@ -52,21 +44,52 @@ public class MissionaryAnalyzer {
 		HashSet<Long> processedUsers = new HashSet<Long>();
 		HashMap<Long, Double> scores = new HashMap<Long, Double>();
 		
-		int counter=0;
+		HashMap<Long, Integer> window = new HashMap<Long, Integer>();
+		
+		int firstDateIndex = 0;
+		long userId = 0;
+		HashSet<Long> following;
+		int hourDiff = 0;
+		
 		for(int i=0;i<statuses.length;i++) {
 			
-			long userId = statuses[i].userId;
+			hourDiff = HourOperations.getHourId( statuses[firstDateIndex].createdAt, statuses[i].createdAt );
+			while(hourDiff > windowSize){				
+				firstDateIndex ++;
+				int count = window.get(statuses[firstDateIndex].userId);
+				if(count == 1){
+					window.remove(statuses[firstDateIndex].userId);
+				}else{
+					window.put(statuses[firstDateIndex].userId, count - 1);
+				}	
+				hourDiff = HourOperations.getHourId( statuses[firstDateIndex].createdAt, statuses[i].createdAt );
+			}
 			
+			userId = statuses[i].userId;
+						
 			if(!processedUsers.contains(userId)){
-				processedUsers.add(userId);
+				processedUsers.add(userId);	
 				
-				processThisUser(statuses, graph.get(userId), scores, i);
+				following = graph.get(userId);
+				
+				if(following != null && following.size() > 0){				
+					Set<Long> temp = new HashSet<Long>();				
+					temp.addAll(following);
+					
+					temp.retainAll(window.keySet());
+					
+					double score = 1.0 / temp.size();
+					
+					for(Long l: temp){
+						double current = scores.containsKey(l) ? scores.get(l) : 0.0;
+						scores.put(l, current + score);
+					}
+				}
 			}
 			
-			counter++;
-			if(counter % 1000 == 0) {
-				System.out.println(counter);
-			}
+			// put the new user ..
+			int count = window.containsKey(userId) ? window.get(userId) : 0;
+			window.put(statuses[i].userId, count + 1);
 		}	
 		
 		for(Entry<Long, Double> item: scores.entrySet()) {
