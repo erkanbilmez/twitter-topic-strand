@@ -15,24 +15,11 @@ import twittertopicstrand.util.HourOperations;
 public class MissionaryAnalyzer {
 
 	public int windowSize = 12; //hours
-	public double thresholdFraction = 0.05;
+	public double thresholdFraction = 0.005;
 	
 	public int missionaryCount;
 	public int[] missionaryCountsByHour;
 	public HashSet<Long> missionaries;
-	
-	public boolean hasDuplicateValue(HashSet hs1, Set hs2) {
-		
-	    if (hs2.size() == 0) {
-	        return false;
-	    }
-	    for (Object obj : hs1) {
-	        if (hs2.contains(obj)) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
 	
 	public HashSet<Long> getMissionaries(ArrayList<HashMap<Long, Integer>> participants, 
 							HashSet<Long> allParticipants, LightStatus[] statuses) throws IOException {
@@ -42,13 +29,12 @@ public class MissionaryAnalyzer {
 		HashMap<Long, HashSet<Long>> graph = FollowerGraphCreater.create("/home/mll2/Desktop/reduced_rel.csv");
 		
 		HashSet<Long> processedUsers = new HashSet<Long>();
-		HashMap<Long, Double> scores = new HashMap<Long, Double>();
-		
+		HashMap<Long, Double> scores = new HashMap<Long, Double>();		
 		HashMap<Long, Integer> window = new HashMap<Long, Integer>();
+		HashSet<Long> following;		
 		
 		int firstDateIndex = 0;
 		long userId = 0;
-		HashSet<Long> following;
 		int hourDiff = 0;
 		
 		for(int i=0;i<statuses.length;i++) {
@@ -92,8 +78,10 @@ public class MissionaryAnalyzer {
 			window.put(statuses[i].userId, count + 1);
 		}	
 		
+		double threshold = allParticipants.size() * thresholdFraction;
+		
 		for(Entry<Long, Double> item: scores.entrySet()) {
-			if(item.getValue() > 30) {
+			if(item.getValue() > threshold) {
 				rVal.add(item.getKey());
 			}
 		}
