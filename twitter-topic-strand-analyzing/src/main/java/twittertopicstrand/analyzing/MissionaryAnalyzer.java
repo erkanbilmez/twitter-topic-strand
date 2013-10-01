@@ -14,7 +14,7 @@ import twittertopicstrand.util.HourOperations;
 
 public class MissionaryAnalyzer {
 
-	public int windowSize = 12; //hours
+	public int windowSize = 12; // hours
 	public double thresholdFraction = 0.005;
 	
 	public int missionaryCount;
