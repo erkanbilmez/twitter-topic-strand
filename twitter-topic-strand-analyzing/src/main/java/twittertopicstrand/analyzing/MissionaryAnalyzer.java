@@ -33,6 +33,8 @@ public class MissionaryAnalyzer {
 		HashMap<Long, Integer> window = new HashMap<Long, Integer>();
 		HashSet<Long> following;		
 		
+		ArrayList<Long> tempList = new ArrayList<Long>();
+				
 		int firstDateIndex = 0;
 		long userId = 0;
 		int hourDiff = 0;
@@ -58,18 +60,29 @@ public class MissionaryAnalyzer {
 				
 				following = graph.get(userId);
 				
-				if(following != null && following.size() > 0){				
-					Set<Long> temp = new HashSet<Long>();				
-					temp.addAll(following);
+				if(following != null && following.size() > 0){
+					if(following.size() < window.size()){
+						for(Long foll: following){
+							if(window.keySet().contains(foll)){
+								tempList.add(foll);
+							}
+						}
+					}else{
+						for(Long foll: window.keySet()){
+							if(following.contains(foll)){
+								tempList.add(foll);
+							}
+						}
+					}
 					
-					temp.retainAll(window.keySet());
+					double score = 1.0 / tempList.size();
 					
-					double score = 1.0 / temp.size();
-					
-					for(Long l: temp){
+					for(Long l: tempList){
 						double current = scores.containsKey(l) ? scores.get(l) : 0.0;
 						scores.put(l, current + score);
 					}
+					
+					tempList.clear();
 				}
 			}
 			

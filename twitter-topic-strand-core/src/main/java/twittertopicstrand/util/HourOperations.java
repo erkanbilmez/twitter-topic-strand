@@ -14,11 +14,10 @@ public class HourOperations {
 		return dt.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
 	}
 	
-	public static int getHourId(Date start, Date dt){		
-		DateTime s = new DateTime(start);
-		DateTime d = new DateTime(dt);
-		
-		return getHourId(s,d);
+	public static int getHourId(Date start, Date end){		
+		long secs = (end.getTime() - start.getTime()) / 1000;
+		int hours = (int) ( secs / 3600 ); 
+		return hours;
 	}
 	
 	public static int getHourId(DateTime start, DateTime dt){		
