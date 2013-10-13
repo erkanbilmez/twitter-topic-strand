@@ -12,10 +12,7 @@ import java.util.Set;
 import twitter4j.LightStatus;
 import twittertopicstrand.util.HourOperations;
 
-public class MissionaryAnalyzer {
-
-	public int windowSize = 12; // hours
-	public double thresholdFraction = 0.005;
+public class MissionaryAnalyzer {	
 	
 	public int missionaryCount;
 	public int[] missionaryCountsByHour;
@@ -42,7 +39,7 @@ public class MissionaryAnalyzer {
 		for(int i=0;i<statuses.length;i++) {
 			
 			hourDiff = HourOperations.getHourId( statuses[firstDateIndex].createdAt, statuses[i].createdAt );
-			while(hourDiff > windowSize){				
+			while(hourDiff > AnalyzingParameters.missionaryWindowSize){				
 				firstDateIndex ++;
 				int count = window.get(statuses[firstDateIndex].userId);
 				if(count == 1){
@@ -91,7 +88,7 @@ public class MissionaryAnalyzer {
 			window.put(statuses[i].userId, count + 1);
 		}	
 		
-		double threshold = allParticipants.size() * thresholdFraction;
+		double threshold = allParticipants.size() * AnalyzingParameters.missionaryThresholdFraction;
 		
 		for(Entry<Long, Double> item: scores.entrySet()) {
 			if(item.getValue() > threshold) {

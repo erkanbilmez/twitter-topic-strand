@@ -3,11 +3,14 @@ package twittertopicstrand.analyzing;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 
 import twitter4j.LightStatus;
+import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 import twittertopicstrand.util.HourOperations;
@@ -27,10 +30,12 @@ public class TopicAnalyzer {
 	HashSet<Long> allParticipants = new HashSet<Long>();
 		      
 	VeteranAnalyzer veteranAnalyzer = new VeteranAnalyzer();
-	HeroAnalyzer heroAnalyzer = new HeroAnalyzer();
+	NoisyAnalyzer noisyAnalyzer = new NoisyAnalyzer();
 	MissionaryAnalyzer missionaryAnalyzer = new MissionaryAnalyzer();
 	ApostleAnalyzer apostleAnalyzer = new ApostleAnalyzer();
 	RetweetAnalyzer retweetAnalyzer = new RetweetAnalyzer();
+	
+	JSONArray userTweetCounts = new JSONArray();
 	
 	public TopicAnalyzer(String topicIdentifier, LightStatus[] statuses) throws Throwable {
 		this.topicIdentifier = topicIdentifier;
@@ -44,12 +49,16 @@ public class TopicAnalyzer {
 	
 	private void init() throws Exception {
 		
+		allParticipants = new HashSet<Long>();
+		
 		int length = HourOperations.getHourId(this.firstTime, this.lastTime) + 1;
 		hourlyParticipants = new ArrayList< HashMap<Long, Integer> > (length);
 		
 		for(int i=0;i<length;i++) {
 			hourlyParticipants.add( new HashMap<Long, Integer>() );
 		}
+		
+		HashMap<Long, int[]> tweetNumbers = new HashMap<Long, int[]>();
 			
 		for(int i=0;i<statuses.length;i++) {
 			long userId = statuses[i].userId;
@@ -61,14 +70,28 @@ public class TopicAnalyzer {
 			
 			if(!allParticipants.contains(userId)){
 				allParticipants.add(userId);
+				tweetNumbers.put(userId, new int[length]);				
 			}
+			
+			tweetNumbers.get(userId)[hourId]++;
 		}
 		
 		this.veteranAnalyzer.analyze(hourlyParticipants, allParticipants);
-		this.heroAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
+		this.noisyAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		this.missionaryAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		//this.apostleAnalyzer.analyze(hourlyParticipants, allParticipants, this.statuses);
 		this.retweetAnalyzer.analyze(this.statuses);
+		
+		for(Entry<Long, int[]> entry: tweetNumbers.entrySet()) {
+			Long userId = entry.getKey();
+			if(this.veteranAnalyzer.veterans.contains(userId) || 
+					this.noisyAnalyzer.noisies.contains(userId) ||
+						this.missionaryAnalyzer.missionaries.contains(userId) )  {
+				JSONObject temp = new JSONObject();
+				temp.put(String.valueOf(entry.getKey()), getSummary( entry.getValue() ) );
+				userTweetCounts.put(temp);
+			}
+		}
 		
 		this.initJSONObject();
 	}
@@ -90,6 +113,7 @@ public class TopicAnalyzer {
 	
 	private int[] getParticipantVolumes() {
 		int[] rVal = new int[this.hourlyParticipants.size()];
+		
 		
 		for(int i=0;i<hourlyParticipants.size();i++){
 			rVal[i] = hourlyParticipants.get(i).size(); 
@@ -125,13 +149,13 @@ public class TopicAnalyzer {
 		mainJson.put("TweetCount", this.statuses.length);
 		mainJson.put("ParticipantCount", this.allParticipants.size() );
 		mainJson.put("VeteranCount", this.veteranAnalyzer.veteranCount );
-		mainJson.put("HeroCount", this.heroAnalyzer.heroCount );
+		mainJson.put("NoisyCount", this.noisyAnalyzer.noisyCount );
 		mainJson.put("MissionaryCount", this.missionaryAnalyzer.missionaryCount );
 		mainJson.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		mainJson.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		
 		mainJson.put("Veterans", this.veteranAnalyzer.veterans);
-		mainJson.put("Heroes", this.heroAnalyzer.heroes);
+		mainJson.put("Noisies", this.noisyAnalyzer.noisies);
 		mainJson.put("Missionaries", this.missionaryAnalyzer.missionaries);
 		
 		int[] tweetVolume = getTweetVolumes();
@@ -141,22 +165,24 @@ public class TopicAnalyzer {
 		int[] participantSummary = getSummary(participantVolume);
 		
 		int[] veteranSummary = getSummary(veteranAnalyzer.veteranCountsByHour);
-		int[] heroSummary = getSummary(heroAnalyzer.heroCountsByHour);
+		int[] noisySummary = getSummary(noisyAnalyzer.noisyCountsByHour);
 		int[] missionarySummary = getSummary(missionaryAnalyzer.missionaryCountsByHour);
 		
 		mainJson.put("TweetVolume", tweetVolume);
 		mainJson.put("ParticipantVolume", participantVolume);
 		mainJson.put("VeteranVolume", veteranAnalyzer.veteranCountsByHour);
-		mainJson.put("HeroVolume", heroAnalyzer.heroCountsByHour);
+		mainJson.put("NoisyVolume", noisyAnalyzer.noisyCountsByHour);
 		mainJson.put("MissionaryVolume", missionaryAnalyzer.missionaryCountsByHour);
 		
 		mainJson.put("TweetSummary", tweetVolumeSummary);
 		mainJson.put("ParticipantSummary", participantSummary);
 		mainJson.put("VeteranSummary", veteranSummary);
-		mainJson.put("HeroSummary", heroSummary);
+		mainJson.put("NoisySummary", noisySummary);
 		mainJson.put("MissionarySummary", missionarySummary);
 		
 		mainJson.put("MostRetweetedTweets", this.retweetAnalyzer.mostRetweetedLightStatuses);
+		
+		mainJson.put("UserTweetCounts", this.userTweetCounts);
 		
 		// indexJson
 		
@@ -164,7 +190,7 @@ public class TopicAnalyzer {
 		indexJson.put("TweetCount", this.statuses.length);
 		indexJson.put("ParticipantCount", this.allParticipants.size() );
 		indexJson.put("VeteranCount", this.veteranAnalyzer.veteranCount );
-		indexJson.put("HeroCount", this.heroAnalyzer.heroCount );
+		indexJson.put("NoisyCount", this.noisyAnalyzer.noisyCount );
 		indexJson.put("MissionaryCount", this.missionaryAnalyzer.missionaryCount );
 		indexJson.put("FirstHour", this.firstTime.toString("yyyy-MM-dd-HH:mm:ss"));
 		indexJson.put("LastHour", this.lastTime.toString("yyyy-MM-dd-HH:mm:ss"));

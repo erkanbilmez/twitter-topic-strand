@@ -33,7 +33,7 @@ public class RetweetAnalyzer {
 						
 				if(count < 1){
 					JSONObject tweet = new JSONObject();
-			    	tweet.put("text", current.text.substring(3)); 
+			    	tweet.put("text", current.text); 
 			    	tweet.put("id", current.retweetedStatusId);
 			    	tweet.put("userId", current.retweetedStatusUserId);
 			    	

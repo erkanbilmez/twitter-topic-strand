@@ -10,17 +10,15 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 
 public class VeteranAnalyzer {
-	float vetr_fraction = 0.9f;
-	int vetr_segcount = 10;
-	
+
 	public int veteranCount;
 	public int[] veteranCountsByHour;
 	public HashSet<Long> veterans;
 	
 	private HashSet<Long> getVeterans(ArrayList<HashMap<Long, Integer>> hourlyParticipants) throws Exception {
-		int numOfChunks = vetr_segcount;
+		int numOfChunks = AnalyzingParameters.veteranSegCount;
 		int numOfItemsPerChunk = hourlyParticipants.size() / numOfChunks;
-		int minChunkCountForVeteran = (int) (numOfChunks * vetr_fraction);
+		int minChunkCountForVeteran = (int) (numOfChunks * AnalyzingParameters.veteranFraction);
 			
 		HashSet<Long> rVal = new HashSet<Long>();
 		

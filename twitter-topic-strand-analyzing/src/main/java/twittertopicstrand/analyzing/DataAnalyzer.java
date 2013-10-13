@@ -47,14 +47,8 @@ public class DataAnalyzer{
   		return rVal;
   	}
   	
-	public static void analyze(String folderPath) throws Throwable {
-		
-		File f = new File(outputDirectory);
-		if(!f.exists()){
-			f.mkdir();
-		}
-		
-		LightStatusSource ls = new LightStatusSource(folderPath);
+  	public static void splitToTopics(String folderPath) throws IOException{
+  		LightStatusSource ls = new LightStatusSource(folderPath);
 		do{
 			String hashTag = FileOperations.getOnlyFileName( ls.getCurrentFileName() );
 			
@@ -62,21 +56,32 @@ public class DataAnalyzer{
 			LightStatus[] chunk = ls.getChunk();
 		
 			List<LightStatus[]> topics = TopicSplitter.splitTopics(chunk);
+		}while(ls.iterate());
+  	}
+		
+	public static void analyze(String folderPath) throws Throwable {
+		
+		File f = new File(outputDirectory);
+		if(!f.exists()){
+			f.mkdir();
+		}
+
+		LightStatusSource ls = new LightStatusSource(folderPath);
+		do{
+			String topicIdentifier = FileOperations.getOnlyFileName( ls.getCurrentFileName() );
+	
+			LightStatus[] topic = ls.getChunk();
+		
+			TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
 			
-			for(int i=0;i<topics.size();i++) {
-				String topicIdentifier = hashTag + "-" + String.valueOf(i);
-				
-				LightStatus[] topic = topics.get(i);
-				
-				TopicAnalyzer analyzer = new TopicAnalyzer(topicIdentifier, topic);
-				
-				String fileName = outputDirectory + File.separatorChar + topicIdentifier + ".json";
-				
-				FileOperations.writeFile(analyzer.getMainJson().toString(), fileName);
-				indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
-			}
+			String fileName = outputDirectory + File.separatorChar + topicIdentifier + ".json";
+			
+			FileOperations.writeFile(analyzer.getMainJson().toString(), fileName);
+			indexJson.put( topicIdentifier, analyzer.getIndexJSon() );
 			
 		}while(ls.iterate());
+		
+		indexJson.put("Parameters", AnalyzingParameters.getParametersAsJson());
 		
 		String indexFileName = outputDirectory + File.separatorChar + "@index" + ".json";
 		FileOperations.writeFile(indexJson.toString(), indexFileName);

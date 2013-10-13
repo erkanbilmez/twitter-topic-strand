@@ -15,7 +15,7 @@ import twittertopicstrand.util.Pair;
 
 public class ActivityAnalyzer {
 	static void analyze(String folderPath) throws IOException {
-		LightStatusSource lsSource = new LightStatusSource(folderPath); 
+		LightStatusSource lsSource = new LightStatusSource(folderPath);
 		
 		do{
 			LightStatus[] subset = lsSource.getChunk();
