@@ -2,10 +2,12 @@ package twittertopicstrand.analyzing;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import twittertopicstrand.util.MapOperations;
 
 public class App {
-	
-	
 	
 	public static void convert() throws IOException {
     	//String src = "/home/twtuser/reduced-tweets";
@@ -23,9 +25,12 @@ public class App {
     public static void main( String[] args ) throws Throwable {    	
     	    	
     	System.out.println("hello ..");
+    	    	
+    	TFIDFAnalyzer analyzer = new TFIDFAnalyzer();
+    	analyzer.analyze();
     	
-    	String src = "/home/mll2/Desktop/lightTweets-splitted-topics";
-    	DataAnalyzer.analyze(src);
+//    	String src = "/home/mll2/Desktop/lightTweets-splitted-topics";
+//    	DataAnalyzer.analyze(src);
     	
     	System.out.println("bye .. ");
     }    

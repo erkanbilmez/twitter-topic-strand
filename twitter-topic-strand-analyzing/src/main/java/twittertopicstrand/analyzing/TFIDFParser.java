@@ -9,67 +9,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import twittertopicstrand.util.FileOperations;
+import twittertopicstrand.util.MapOperations;
 
 public class TFIDFParser {
-	
-	// This variable will hold all terms of each document in an array.
-	private HashMap<String, String[]> termsDocsArray = new HashMap<String, String[]>();
-	private HashSet<String> allTerms = new HashSet<>();
-	private HashMap<String, HashMap<String, Double>> tfidfresult = new HashMap<>();
-	
-	public void parseFiles(String filePath) throws IOException {
-		File[] allfiles = new File(filePath).listFiles();
-		
-		BufferedReader in = null;
-		for (File f : allfiles) {			
-			in = new BufferedReader(new FileReader(f));
-			StringBuilder sb = new StringBuilder();
-			String s = null;
-			
-			while ((s = in.readLine()) != null) {					
-				sb.append(s).append(" ");				
-			}
-
-			String result = sb.toString();
-			String[] tokenizedTerms = result.split(" "); // to															
-
-			for (String term : tokenizedTerms) {
-				if (term.length() != 0)
-					allTerms.add(term);				
-			}
-
-			termsDocsArray.put(f.getName(), tokenizedTerms);
-			System.out.println(f.getName());
-			in.close();			
-		}
-	}
-	
-	public HashMap<String, HashMap<String, Double>> tfIdfCalculator() {
-		double tf; // term frequency
-		double idf; // inverse document frequency
-		double tfidf; // term requency inverse document frequency
-		for (Entry<String, String[]> docTermsArray : termsDocsArray.entrySet()) {
-			for (String terms : allTerms) {
-				tf = TFIDFCalculator.tfCalculator(docTermsArray.getValue(), terms);
-				idf = TFIDFCalculator.idfCalculator(termsDocsArray.values(), terms);
-				tfidf = tf * idf;
-				if (tfidf > 0) {	
-					if (!tfidfresult.containsKey(docTermsArray.getKey())) {
-						HashMap<String, Double> wordtfidf = new HashMap<String, Double>();
-						wordtfidf.put(terms, tfidf);
-						tfidfresult.put(docTermsArray.getKey(), wordtfidf);
-					} else {
-						tfidfresult.get(docTermsArray.getKey()).put(terms,
-								tfidf);
-					}
-				}
-			}
-		}
-		return tfidfresult;
-	}	
 	
 	public static String purifyOneLine(String input){
 		

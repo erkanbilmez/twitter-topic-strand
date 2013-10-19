@@ -2,6 +2,7 @@ package twittertopicstrand.util;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,21 @@ public class MapOperations {
 		}
 		
 		return sortedMap;
+	}
+	
+	public static <K,V> HashMap<K,V> getFirstNElements(Map<K,V> myMap, int N){
+		HashMap<K,V> rVal = new LinkedHashMap<K,V>();
+
+		int i=0;
+		for (Map.Entry<K, V> entry : myMap.entrySet()) {
+			rVal.put(entry.getKey(), entry.getValue());
+			i++;
+			
+			if(i + 1> N)
+				break;
+		}		
+		
+		return rVal;
 	}
 
 }
