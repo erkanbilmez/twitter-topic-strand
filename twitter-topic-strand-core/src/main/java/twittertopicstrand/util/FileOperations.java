@@ -182,6 +182,8 @@ public class FileOperations {
     }
     
 	public static int sortFileStatus(String sourceFilePath, String destFilePath) throws IOException {
+		System.out.println("x2");
+		
 		int rVal = 0;
 		
 		List<Status> statuses = new ArrayList<Status>();		
@@ -190,7 +192,7 @@ public class FileOperations {
 		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
         String line;
         
-        System.out.println("x2.");
+        System.out.println("x3");
         
         while ((line = br.readLine()) != null) {
         	temp = StatusFactory.fromString(line);
