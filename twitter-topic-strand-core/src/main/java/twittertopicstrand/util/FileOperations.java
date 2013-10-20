@@ -180,40 +180,6 @@ public class FileOperations {
         }
         finally { fileHandler.close(); }
     }
-    
-	public static int sortFileStatus(String sourceFilePath, String destFilePath) throws IOException {
-		System.out.println("x2");
-		
-		int rVal = 0;
-		
-		List<Status> statuses = new ArrayList<Status>();		
-		Status temp;
-		
-		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
-        String line;
-        
-        System.out.println("x3");
-        
-        while ((line = br.readLine()) != null) {
-        	temp = StatusFactory.fromString(line);
-        	statuses.add(temp);
-        }
-        br.close();
-        
-		System.out.println("sorting started.");
-		Collections.sort(statuses);
-		System.out.println("sorting ended.");
-		rVal = statuses.size();
-		
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
-        for(int i=0;i<statuses.size();i++){
-			bw.write(statuses.get(i).toFriendlyString());
-        	bw.newLine();
-        }
-        bw.close();
-        
-        return rVal;
-	}
 	
 	public static int sortFileLightStatus(String sourceFilePath, String destFilePath) throws IOException {
 		int rVal = 0;
