@@ -117,7 +117,9 @@ public class CronJob implements Runnable {
 				
 		String[] tempFilesArray = tempFiles.toArray(new String[tempFiles.size()]);
 		
+		System.out.println("combine files started");
 		FileOperations.combineFiles(tempFilesArray, unSortedDestFile);
+		System.out.println("combine files ended");
 		
 		for(int i=0;i<tempFilesArray.length;i++) {
 			File f = new File(tempFilesArray[i]);
@@ -125,17 +127,7 @@ public class CronJob implements Runnable {
 		}
 		
 		int numTweets = FileOperations.sortFileStatus(unSortedDestFile, destFile);
-		
-		try{
-			String to = "sehir.tweet.logging@gmail.com";
-			String subject = "hourly report";
-			String body = String.valueOf(numTweets) + " tweets in " + dt.toString("yy-MM-dd-HH");
 			
-			MailSender.send(to, subject, body);
-		}catch(Exception ex){
-			System.out.println("problem with sending e-mail..");
-		}
-		
 		File f1 = new File(unSortedDestFile);
 		f1.delete();
 		
