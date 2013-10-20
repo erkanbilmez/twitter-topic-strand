@@ -190,11 +190,14 @@ public class FileOperations {
 		BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
         String line;
         
+        System.out.println("x2.");
+        
         while ((line = br.readLine()) != null) {
         	temp = StatusFactory.fromString(line);
         	statuses.add(temp);
         }
         br.close();
+        
 		System.out.println("sorting started.");
 		Collections.sort(statuses);
 		System.out.println("sorting ended.");

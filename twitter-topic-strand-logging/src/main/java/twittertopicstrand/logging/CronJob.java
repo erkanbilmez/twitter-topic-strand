@@ -123,9 +123,10 @@ public class CronJob implements Runnable {
 		
 		for(int i=0;i<tempFilesArray.length;i++) {
 			File f = new File(tempFilesArray[i]);
-			f.delete();
+			//f.delete();
 		}
 		
+		System.out.println("x1");
 		int numTweets = FileOperations.sortFileStatus(unSortedDestFile, destFile);
 			
 		File f1 = new File(unSortedDestFile);
