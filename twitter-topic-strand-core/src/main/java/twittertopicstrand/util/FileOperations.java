@@ -195,8 +195,9 @@ public class FileOperations {
         	statuses.add(temp);
         }
         br.close();
-		
+		System.out.println("sorting started.");
 		Collections.sort(statuses);
+		System.out.println("sorting ended.");
 		rVal = statuses.size();
 		
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(destFilePath) , true));
