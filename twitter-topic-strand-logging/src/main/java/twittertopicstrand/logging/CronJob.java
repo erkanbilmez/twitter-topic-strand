@@ -151,16 +151,13 @@ public class CronJob implements Runnable {
 				
 		String[] tempFilesArray = tempFiles.toArray(new String[tempFiles.size()]);
 		
-		System.out.println("combine files started");
 		FileOperations.combineFiles(tempFilesArray, unSortedDestFile);
-		System.out.println("combine files ended");
 		
 		for(int i=0;i<tempFilesArray.length;i++) {
 			File f = new File(tempFilesArray[i]);
-			//f.delete();
+			f.delete();
 		}
 		
-		System.out.println("x1");
 		sortFileStatus(unSortedDestFile, destFile);
 			
 		File f1 = new File(unSortedDestFile);
