@@ -97,7 +97,7 @@ public class CronJob implements Runnable {
         }
 	}
 	
-	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException{				
+	public static void processThisDate(String sourceFolderPath, String destFolderPath, DateTime dt) throws IOException {				
 		String[] files = FileOperations.getFiles(sourceFolderPath);
 		
 		List<String> tempFiles = new ArrayList<String>();
